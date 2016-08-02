@@ -1,0 +1,36 @@
+# Views.py for SHOWCASE
+
+from django.shortcuts import render, get_object_or_404
+from django.template import loader
+from django.http import HttpResponse, Http404
+from django.views import generic
+
+from .models import Project
+
+
+def home(request):
+    template = loader.get_template('showcase/home.html')
+    return HttpResponse(template.render(request))
+
+
+def resume(request):
+    template = loader.get_template('showcase/resume.html')
+    return HttpResponse(template.render(request))
+
+
+def projects(request):
+    projects = Project.objects.all()
+    return render(request, 'showcase/projects.html', {'all_projects': projects})
+
+def detail(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    return render(request, 'showcase/project_detail.html', {'project': project})
+
+
+def concepts(request):
+    template = loader.get_template('showcase/concepts.html')
+    return HttpResponse(template.render(request))
+
+def interests(request):
+    template = loader.get_template('showcase/interests.html')
+    return HttpResponse(template.render(request))

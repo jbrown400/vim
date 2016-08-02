@@ -1,0 +1,7 @@
+body {
+    background-color: #EEEEEE;
+}
+
+div {
+    font-size: 10em;
+}

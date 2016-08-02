@@ -1,0 +1,52 @@
+<ion-view view-title="Recipes">
+    <ion-content>
+        <div ng-repeat="recipe in mexican_recipes">
+            <div ng-if="$index % 3 == 0" class="row" style="padding: 0px;">
+                <div class="card">
+                    <a href="#/app/cooknuk/{{mexican_recipes[$index].id}}/ingredients">
+                        <div class="item item-image">
+                            <img src="{{mexican_recipes[$index].img}}">
+                        </div>
+                        <div class="item">
+                            {{mexican_recipes[$index].title}}
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#/app/cooknuk/{{mexican_recipes[$index + 1].id}}/ingredients">
+                        <div class="item item-image">
+                            <img src="{{mexican_recipes[$index + 1].img}}">
+                        </div>
+                        <div class="item">
+                            {{mexican_recipes[$index + 1].title}}
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#/app/cooknuk/{{mexican_recipes[$index + 2].id}}/ingredients">
+                        <div class="item item-image">
+                            <img src="{{mexican_recipes[$index + 2].img}}">
+                        </div>
+                        <div class="item">
+                            {{mexican_recipes[$index + 2].title}}
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="item">
+                Save Your Supper
+            </div>
+            <div class="item">
+                <ion-scroll direction="x">
+                    <div ng-repeat="day in days" style="display:inline-block">
+                        <div class="item">
+                            {{days[$index].title}}
+                        </div>
+                    </div>
+                </ion-scroll>
+            </div>
+        </div> 
+  </ion-content>
+</ion-view>

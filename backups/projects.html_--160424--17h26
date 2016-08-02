@@ -1,0 +1,18 @@
+{% extends 'showcase/base.html' %}
+
+{% block content %
+    <h1> Projects </h1>
+    <a href="{% url 'showcase:home' %}">Home</a>
+
+    {% if all_projects %}
+        <h3>List of projects</h3>
+        <ul>
+            {% for project in all_projects %}
+            <li><a href="{% url 'showcase:detail' project.project_id %}">{{ project.title }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+    <h3>There are no projects</h3>
+    {% endif %}
+
+{% endblock %}

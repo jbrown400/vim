@@ -1,0 +1,16 @@
+// Justin Brown 
+// Programming Languages and Translators (SP 2016)
+// Recursive Decent Parser for Progatron-16.3
+
+#include <iostream>
+#include <string>
+#include <regex>
+#include "grammar.h"
+using namespace std;
+
+int main(){
+    // Runs the parsing
+    //begin_parsing();
+    begin_parsing();
+    return 0;
+}

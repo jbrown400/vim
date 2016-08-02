@@ -1,0 +1,52 @@
+<ion-view view-title="Cook N&uumlk">
+  <ion-content>
+        <div ng-repeat="type in types">
+            <div ng-if="$index % 3 == 0" class="row">
+                <a class="{{types[$index].id}} col" href="#/app/cooknuk/{{types[$index].id}}">
+                    {{types[$index].title}}
+                </a>
+                <a class="{{types[$index + 1].id}} col" href="#/app/cooknuk/{{types[$index + 1].id}}">
+                    {{types[$index + 1].title}}
+                </a>
+                <a class="{{types[$index + 2].id}} col" href="#/app/cooknuk/{{types[$index + 2].id}}">
+                    {{types[$index + 2].title}}
+                </a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="item">
+                Save Your Supper
+            </div>
+            <div class="item">
+                <ion-scroll direction="x">
+                    <div ng-repeat="day in days" style="display:inline-block">
+                        <div class="item">
+                            {{days[$index].title}}
+                        </div>
+                    </div>
+                </ion-scroll>
+            </div>
+        </div> 
+    <div ng-repeat="day in days">
+    </div>
+
+         <!--
+         <ion-slide-box>
+             <ion-slide style="overflow:auto; text-align:center;padding-bottom:30px;">
+                 <div class="card" style="display:inline-block;width:18%;text-align:center;height:40px;">Monday</div>
+                 <div class="card" style="display:inline-block;width:18%;text-align:center;height:40px;">Tuesday</div>
+                 <div class="card" style="display:inline-block;width:18%;text-align:center;height:40px;">Wednesday</div>
+                 <div class="card" style="display:inline-block;width:18%;text-align:center;height:40px;">Thursdsay</div>
+             </ion-slide>
+             <ion-slide style="overflow:auto;text-align:center;padding-bottom:30px;">
+                 <div class="card" style="display:inline-block;width:25%;text-align:center;height:40px;">Friday</div>
+                 <div class="card" style="display:inline-block;width:25%;text-align:center;height:40px;">Saturday</div>
+                 <div class="card" style="display:inline-block;width:25%;text-align:cetner;height:40px;">Sunday</div>
+             </ion-slide>
+         </ion-slide-box>
+         -->
+    <div id="sendButtonContainer" ng-controller="PopupCtrl">
+        <button class="button button-large" id="sendToCart" ng-click="showConfirm()">Send To Cart</button> 
+    </div>
+  </ion-content>
+</ion-view>

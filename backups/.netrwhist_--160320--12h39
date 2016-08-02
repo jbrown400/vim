@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/home/justin/lib/dotconfigs/dotvim/colors'
+let g:netrw_dirhist_2='/home/justin/ai/puzzles/puzzle_1'
+let g:netrw_dirhist_3='/home/justin/projects/sweaters-but-with-peer-reviews/browse'
+let g:netrw_dirhist_4='/home/justin/projects/sweaters-but-with-peer-reviews/browse/static'
+let g:netrw_dirhist_5='/home/justin/projects/sweaters-but-with-peer-reviews/browse/static/browse/js'
+let g:netrw_dirhist_6='/home/justin/ai/puzzles/puzzle_2'
+let g:netrw_dirhist_7='/home/justin/lib/dotconfigs/dotvim/colors'
+let g:netrw_dirhist_8='/home/justin/.mozilla'
+let g:netrw_dirhist_9='/home/justin/projects/sweaters-but-with-peer-reviews/browse/static/browse/scss'

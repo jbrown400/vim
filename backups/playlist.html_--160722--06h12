@@ -1,0 +1,44 @@
+<ion-view view-title="Playlist">
+  <ion-content>
+    <h1>Menu</h1>
+    <div class="grid">
+		    <div class="row1">
+	    		<div class="col-3">
+                <a href="#/app/ingrediants">
+	    			<div class="nachos">
+                  <h3>Nachos</h3>
+	    			</div>
+                </a> 
+	    		</div>
+	    		<div class="col-3">
+	    			<div class="burritos">
+	    				<h3>Burritos</h3>
+	    			</div>
+	    		</div>
+	    		<div class="col-3">
+	    			<div class="enchiladas">
+	    				<h3>Enchiladas</h3>
+	    			</div>
+	    		</div>
+	    	</div>
+	    <div class="row1">
+	    		<div class="col-3">
+	    			<div class="tacos">
+	    				<h3>Tacos</h3>
+	    			</div>
+	    		</div>
+	    		<div class="col-3">
+	    			<div class="quesadillas">
+	    				<h3>Quesadillas</h3>
+	    			</div>
+	    		</div>
+	    		<div class="col-3">
+	    			<div class="fajitas">
+	    				<h3>Fajitas</h3>
+	    			</div>
+	    		</div>
+	    	</div>
+	   </div>
+
+  </ion-content>
+</ion-view>

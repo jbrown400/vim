@@ -1,0 +1,47 @@
+{% extends 'browse/base.html' %}
+{% load staticfiles %}
+{% block title %}Home{% endblock %}
+{% load gravatar %}
+
+{% block content %}
+  {% if reviews|length > 0 %}
+    <h2>Latest {{reviews|length}} Review(s)</h2>
+    {% for review in reviews %}
+      <div class="divider divider--dark"></div>
+      <a href="{% url 'profile' review.source.id %}">
+      <li class="list-row">
+        <div class="list-row__primary" >
+            <img src="{% gravatar_url review.source.email 200 %}" width="100" height="100" class="img-round">
+        </div>
+        
+        
+        {% if review.source.first_name or review.source.last_name %}
+        <div class="card bgc-indigo-500 tc-white-1 p+">
+          <div class="list-row__content">
+              <span class="display-block">{{ review.source.first_name }} {{ review.source.last_name }}</a></span>
+              <span class="display-block fs-body-1 tc-black-2">{{ review.course.name }}
+                -- <a href="{% url 'review' review_id=review.id %}">View</a><br /></span>
+          </div>
+        </div>  
+        {% else %}
+        <div class="list-row__content">
+            <span class="display-block">{{ review.source.username }}</a></span>
+            <span class="display-block fs-body-1 tc-black-2">{{ review.course.name }}</span>
+        </div>
+
+        <div class="list-row__secondary">
+            <i class="icon icon--xs icon--grey icon--flat mdi mdi-information"></i>
+        </div>
+          
+        {% endif %}
+      </li>
+
+    {% endfor %}
+  {% else %}
+    <h2>There are no reviews</h2>
+  {% endif %}
+
+  <br /> <br />
+
+
+{% endblock %}

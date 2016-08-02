@@ -1,0 +1,44 @@
+#include <iostream>
+#include <string>
+#include "Game.h"
+#include "Player.h"
+#include "Piece.h"
+#include "King.h"
+using namespace std;
+
+
+
+int main(){
+    Game myGame;
+    int choice = 0;
+    cout << "Please choose an option: \n";
+    cout << "1. Player v. Player \n";
+    cout << "2. Player v. A.I. \n";
+    cout << "3. A.I. v. A.I. \n";
+    
+    cin >> choice;
+    switch (choice){
+        case 1:
+            cout << "You have chosen Player v. Player\n";
+            break;
+        case 2:
+            cout << "You have chosen Player v. A.I.\n";
+            break;
+        case 3:
+            cout << "You have chosen A.I. v. A.I.\n";
+            break;
+        default:
+            cout << "Invalid code\n" << endl;
+            break;
+    }
+    Piece Queen("Black", "Queen", "a", 4);
+    cout << Queen.GetColor() << "\n";
+    cout << Queen.GetType() << "\n";
+    cout << Queen.GetFile() << "\n";
+    cout << Queen.GetRank() << "\n";
+
+    King whiteKing("White", "King", "a", 3);
+    cout << whiteKing.GetType << endl;
+
+    myGame.printBoard();
+}

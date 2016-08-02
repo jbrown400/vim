@@ -1,0 +1,14 @@
+/*
+ * Houses the functionality for the Chess game itself
+ *
+ */
+
+class Game{
+    private:
+        static int x = 1;
+
+    public:
+        int getX(){
+            return x;
+        }
+};

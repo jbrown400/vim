@@ -1,0 +1,9 @@
+import java.util.regex.*;
+
+public class ProgParser{
+    public static void main(String[] args){
+        Grammar gram = new Grammar();
+        System.out.println(gram.is_keyword("while"));
+        gram.begin_parsing();
+    }
+}

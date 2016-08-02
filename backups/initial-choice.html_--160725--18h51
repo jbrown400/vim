@@ -1,0 +1,26 @@
+<ion-view title="Choose Your Speed">
+    <ion-content>
+        <a href="#/app/quickmeals">
+            <div class="card">
+                <h2 class="title">Quick Meals</h2>
+                <div class="item item-image">
+                    <img src="img/quick_meals_alt.jpg" style="height:175px">
+                </div>
+                <div class="item">
+                    <div style="text-align:center">Need something good in a hurry? This is your friend.</div>
+                </div>
+            </div>
+        </a>
+        <a href="#/app/cooknuk">
+            <div class="card">
+                <h2 class="title">Cook N&uumlk</h2>
+                <div class="item item-image">
+                    <img src="img/cooking_alt.jpg" style="height:175px">
+                </div>
+                <div class="item">
+                    <div style="text-align:center">Have time to be a chef? Find your meal here.</div>
+                </div>
+            </div>
+        </a>
+    </ion-content>
+</ion-view>

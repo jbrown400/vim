@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/home/justin/trap-queen/games/chess'
+let g:netrw_dirhist_2='/home/justin/projects/sweaters-but-with-peer-reviews/browse'
+let g:netrw_dirhist_3='/home/justin/projects/sweaters-but-with-peer-reviews/browse/static/browse/bower_components/mdi/fonts'
+let g:netrw_dirhist_4='/home/justin/projects/sweaters-but-with-peer-reviews/browse'
+let g:netrw_dirhist_5='/home/justin/projects/sweaters-but-with-peer-reviews/accounts'
+let g:netrw_dirhist_6='/home/justin/mysite/polls/templates'
+let g:netrw_dirhist_7='/home/justin/mysite/polls/templates/polls'
+let g:netrw_dirhist_8='/home/justin/projects/Semantic-UI/src'

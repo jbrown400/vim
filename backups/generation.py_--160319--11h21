@@ -1,0 +1,172 @@
+# Houses the function that generates ONLY VALID moves for this round
+from games.chess.piece import Piece
+from games.chess.piece_move import movePawn, moveRook, moveKnight, moveBishop,\
+        moveQueen, moveKing
+
+# A function with a dictionary to determine what function to call based on
+# the piece type. 
+def piece_dictionary(self, p, _my_pieces, _op_pieces):
+
+    piece_dictionary = {
+            "Pawn": movePawn(self, p, _my_pieces, _op_pieces),
+            "Rook": moveRook(p, _my_pieces, _op_pieces),
+            "Knight": moveKnight(p, _my_pieces, _op_pieces),
+            "Bishop": moveBishop(p, _my_pieces, _op_pieces),
+            "King": moveKing(p, _my_pieces, _op_pieces),
+            "Queen": moveQueen(p, _my_pieces, _op_pieces),
+    }
+    return piece_dictionary[p.type]
+
+
+
+# Pre: None
+# Post: Returns every possible move your player can make (that will not
+#       result in your king being put into check
+def generateMoves(self, _my_pieces, _op_pieces):
+    king = getKing(_my_pieces)
+    moves = []
+
+    # For each piece, generate all possible moves it can make
+    for p in _my_pieces:
+        tmp_move = [] 
+        # Generate list of all moves
+        # tmp_move.extend(piece_dictionary(self, p, _my_pieces, _op_pieces))
+        
+        if(p.type == "Pawn"):
+            tmp_move.extend(movePawn(self, p, _my_pieces, _op_pieces))
+        elif(p.type == "Rook"):
+            tmp_move.extend(moveRook(p, _my_pieces, _op_pieces))
+        elif(p.type == "Knight"):
+            tmp_move.extend(moveKnight(p, _my_pieces, _op_pieces))
+        elif(p.type == "Bishop"):
+            tmp_move.extend(moveBishop(p, _my_pieces, _op_pieces))
+        elif(p.type == "King"):
+            tmp_move.extend(moveKing(p, _my_pieces, _op_pieces))
+        elif(p.type == "Queen"):
+            tmp_move.extend(moveQueen(p, _my_pieces, _op_pieces))
+        
+        # For each possible move, see if it would result in check
+        for x in tmp_move:
+            # Copy my current list of pieces as to not alter the original
+            tmp_list = copy_pieces(_my_pieces)
+            # tmp_list = copy.deepcopy(_my_pieces)
+            # tmp_list = _my_pieces[:]
+
+            # Make a copy of the oppoents pieces
+            # tmp_op_list = copy.deepcopy(_op_pieces)
+            tmp_op_list = copy_pieces(_op_pieces)
+
+            # Extending the plyer's own pieces will allow it to incorporate
+            # the moves a piece could take if another piece of its own 
+            # color is taken (i. e. a knight taking a bishop that just took
+            # a pawn of the knights color)
+            tmp_list.extend(tmp_op_list)
+            # tmp_list.extend(copy.deepcopy(_op_pieces))
+
+            # If the current move attacks any piece, remove that piece from 
+            # the list of opponents pieces
+            for o in tmp_op_list:
+                if(o.file == x[1] and o.rank == x[2]):
+                    tmp_op_list.remove(o)
+                    break
+            # Pick out the peice from my tmp list of pieces and alter
+            # the rank and file so the test for check can be done
+            for y in tmp_list:
+                if(y.id == x[0].id):
+                    y.setFile(x[1])
+                    y.setRank(x[2])
+                    break
+            # Now generate all possible moves opponent could make based on
+            # this modified list of pieces
+            # Pass _op_pieces first because you want to generate the moves from the
+            # opponents perspective
+            other_moves = []
+            for o in tmp_op_list:
+                # Need to check to see if moving into attack range of Pawns
+                if(o.type == "Pawn"):
+                    # Check for Pawn attacks
+                    if(o.owner.color == "Black"):
+                        v = -1
+                    elif(o.owner.color == "White"):
+                        v = 1
+                    # Check attack
+                    if(any((chr(ord(o.file) + 1) + str(o.rank + v)) == (x.file + str(x.rank)) for x in tmp_list)):
+                        other_moves.extend([[o, chr(ord(o.file) + 1), o.rank + v]])
+                    if(any((chr(ord(o.file) - 1) + str(o.rank + v)) == (x.file + str(x.rank)) for x in tmp_list)):
+                        other_moves.extend([[o, chr(ord(o.file) - 1), o.rank + v]])
+                # Pass it a list of only itself to create any possible
+                # move (including avenging its own pieces)
+                other_moves.extend(piece_dictionary(self, o, [o], tmp_list))
+
+            # See if any opponent moves attack the king
+            if(p.type == "King"):
+                if(not(any((y[1] == x[1] and y[2] == x[2]) for y in other_moves))):
+                    moves.append(x)
+                # Check for castling
+                # Get variables for different ranks between black and white
+                if(p.owner.color == "White"):
+                    v = 1
+                elif(p.owner.color == "Black"):
+                    v = 8
+                # If not in check
+                if(p.owner.in_check is False and p.has_moved is False):
+                    # Check for rook moves
+                    for x in _my_pieces:
+                        # If the rooks in file "a" have not moved
+                        if(x.type == "Rook" and x.has_moved is False and x.file == "a"):
+                            # If there are no piece between them
+                            inBetween = False
+                            possibleAttack = False
+                            for y in _my_pieces:
+                                # If there are no pieces between the King and rook
+                                if(y.rank == v and ord(y.file) in range(ord("b"), ord("e"))):
+                                    inBetween = True
+                            for z in other_moves:
+                                # If there are any attack positions between castling
+                                if(z[2] == v and ord(z[1]) in range(ord("b"), ord("e"))):
+                                    possibleAttack = True
+                            if(inBetween is False and possibleAttack is False):
+                                moves.append([p, "c", v])
+                        # If the rooks in file "h" have not moved
+                        if(x.type == "Rook" and x.has_moved is False and x.file == "h"):
+                            inBetween = False
+                            possibleAttack = False
+                            for y in _my_pieces:
+                                if(y.rank == v and ord(y.file) in range(ord("f"), ord("h"))):
+                                    inBetween = True
+                            for z in other_moves:
+                                # If there are any attack positions between castling
+                                if(z[2] == v and ord(z[1]) in range(ord("f"), ord("h"))):
+                                    possibleAttack = True
+                            if(inBetween is False and possibleAttack is False):
+                                moves.append([p, "g", v])
+            else:
+                if(not(any((y[1] == king.file and y[2] == king.rank) for y in other_moves))):
+                    moves.append(x)
+            del tmp_list
+    return moves
+
+# Pre: None
+# Post: Returns the player's or opponents King, depending on what is passed
+def getKing(list_of_pieces):
+    # _list_of_pieces will either be your own pieces or your opponents 
+    # pieces
+    for x in list_of_pieces:
+        if(x.type == "King"):
+            return x
+    return False
+
+def copy_pieces(list_of_pieces):
+    new_list = []
+    for x in list_of_pieces:
+        tmp = Piece()
+        tmp.setRank(x.rank)
+        tmp.setFile(x.file)
+        tmp.setType(x.type)
+        tmp.setOwner(x.owner)
+        # tmp.setCaptured(x.captured)
+        # tmp.setHasMoved(x.has_moved)
+        tmp.setPieceValue(x._value)
+        tmp.setPieceID(x.id)
+        new_list.append(tmp)
+    return new_list

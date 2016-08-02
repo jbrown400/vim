@@ -1,0 +1,6 @@
+#This is a makefile
+
+all: puz2.py
+	python3.4 puz2.py puzzle1.txt
+	python3.4 puz2.py puzzle2.txt
+	python3.4 puz2.py puzzle3.txt

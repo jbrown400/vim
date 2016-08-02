@@ -1,0 +1,32 @@
+<ion-view view-title="Ingredients">
+    <ion-content>
+        <ion-list>
+            <div class="stable card">
+                <ion-checkbox>
+                    <div class="item">
+                        Tortillas
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Beef
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Beans
+                    </div>
+                </ion-checkbox>
+            </div>
+        </ion-list>
+        <div style="text-align:center;">
+            <button class="button button-positive" style="width:50%">
+                Send To List
+            </button>
+        </div>
+    </ion-content>
+</ion-view>

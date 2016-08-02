@@ -1,0 +1,135 @@
+# This file houses the Iterative-Deepening Depth Limited Minimax function and
+# the "sub-functions" min-value and max-value
+# The heuristic will be "typical" point value for pieces while also accounting
+# for draws and wins
+# import copy
+from games.chess.generation import generateMoves, copy_pieces
+import time
+
+
+# Pre: None
+# Post: Returns a move list [piece, new rank, new file]
+def miniMax(self, my_pieces, op_pieces):
+    alpha = -1001
+    beta = 1001
+    max_level = 20
+    value = -1
+    return_move = []
+    # start timer
+    start = int(round(time.time() * 1000))
+
+    # For loop for iterative deepening
+    for x in range(0, max_level):
+        tmp = max_value(x, self, my_pieces, op_pieces, start, alpha, beta)
+        # break if time limit has been met
+        if(len(tmp) >= 3):
+            if(tmp[2] == -1):
+                print("Got to level", x)
+                return return_move
+        if(tmp[0] > value):
+            value = tmp[0]
+            return_move = tmp[1]
+    return return_move
+
+
+# Pre: None
+# Post: Returns a utility value (integer)
+# My player
+def max_value(_level, self, _my_pieces, _op_pieces, start, alpha, beta):
+    current = int(round(time.time() * 1000))
+    time_elapsed = current - start
+    if(time_elapsed >= 15000):
+        return 0, [], -1
+    # Generate possible moves for pieces passed in
+    moves = generateMoves(self, _my_pieces, _op_pieces)
+    return_move = []
+    value = -1000
+    # Loop through moves
+    for move in moves:
+        # Terminal State
+        if(_level == 0):
+            if(move[4] > value):
+                value = move[4]
+                return_move = move
+        else:
+            # Create copy of pieces that simulates the move
+            tmp_list = copy_pieces(_my_pieces)
+            # Modify list
+            for y in tmp_list:
+                # Match the piece
+                if(move[0].id == y.id):
+                    y.setRank(move[2])
+                    y.setFile(move[1])
+                    break
+            # Call Min to get the value based on the modified list of pieces
+            # Flip _op_pieces and _my_pieces to get the point of view of the opponent
+            tmp = min_value(_level - 1, self, _op_pieces, tmp_list, start, alpha, beta)
+            # break out of the loop if the time limit has bee reached
+            if(tmp[2] == -1):
+                return value, return_move, -1
+            if(tmp[0] > value):
+                value = tmp[0]
+                return_move = move
+            
+            '''Alpha Beta Pruning'''
+            if(tmp[0] >= beta):
+                return value, return_move, 0
+            # set alpha
+            alpha = max(alpha, value)
+
+            del tmp_list
+    return value, return_move, 0
+
+
+# Pre: None
+# Post: Returns a utility value (integer)
+# The opponent (Will be from the perspective of the opponent)
+# NOTE: Using negative values for min will represent the min player making 
+#   their best move, which is the worst possible move for max
+def min_value(_level, self, _my_pieces, _op_pieces, start, alpha, beta):
+    current = int(round(time.time() * 1000))
+    time_elapsed = current - start
+    if(time_elapsed >= 15000):
+        return 0, [], -1
+    # Generate possible moves for pieces passed in
+    moves = generateMoves(self, _my_pieces, _op_pieces)
+    return_move = []
+    value = -1000
+    # Loop through moves
+    for move in moves:
+        # Bottom of iteration
+        if(_level == 0):
+            if(move[4] > value):
+                value = move[4]
+                return_move = move
+        else:
+            # Create copy of pieces that simulates the move
+            tmp_list = copy_pieces(_my_pieces)
+            # Modify list
+            for y in tmp_list:
+                # Match the piece
+                if(move[0].id == y.id):
+                    y.setRank(move[2])
+                    y.setFile(move[1])
+                    break
+            # Call Min to get the value based on the modified list of pieces
+            # Flip _op_pieces and _my_pieces to get the point of view of the opponent
+            tmp = max_value(_level - 1, self, _op_pieces, tmp_list, start, alpha, beta)
+            # break out of the loop if the time limit has bee reached
+            if(tmp[2] == -1):
+                return value, return_move, -1
+            if(tmp[0] < value):
+                value = tmp[0]
+                return_move = move
+
+            '''Alpha Beta Pruning'''
+            if(tmp[0] <= alpha):
+                return value, return_move, 0
+            # set beta
+            beta = max(beta, value)
+
+            del tmp_list
+    return value, return_move, 0
+
+
+

@@ -1,0 +1,412 @@
+import java.util.regex.*;
+import java.util.Scanner;
+
+public class Grammar {
+
+    /* Regular Expressions */
+    //Integers are non-empty sequences of digits optionally preceded with either a ‘+’ or ‘-’ sign.
+    String REG_INTEGER = "(\\+|-)?\\d+";
+
+    //Decimal numbers are Integers followed by a ‘.’, followed by a non-empty sequence of digits.
+    String REG_DECIMAL = "((\\+|-)?[0-9]+)\\.[0-9]+";
+
+    //Strings are any non-space sequences of characters enclosed in “”. e.g. “hello” “abc123”.
+    String REG_STRING = "\"[a-zA-Z0-9]+\"";
+
+
+    //Keywords are the following strings: <=, +, -, *, /, or, and, ~, (, ), lt, gt, eq , <, >, !, print, inc, ret, if, fi, else, while, elihw, defprog, blip, blorp.
+    String REG_KEYWORD = "(is|\\+|-|\\*|/|or|and|~|\\(|\\)|lt|gt|eq|\\<|\\>|\\!|print|inc|ret|if|fi|else|while|elihw|defprog|blip|blorp)";
+
+    //Identifiers are a sequences of digits or letters. The first character must be a letter, and an identifier cannot be a Keyword
+    String REG_IDENTIFIER = "[a-zA-Z]{1}[a-zA-Z0-9]*";
+
+
+
+    //Relation := lt | gt | eq
+    String REG_RELATION = "(<|>|eq)";
+
+    //AddOperator :=   + | - | or
+    String REG_ADD_OPERATOR = "(\\+|-|or)";
+
+    // MulOperator :=   * | / | and
+    String REG_MUL_OPERATOR = "(\\*|/|and)";
+
+    String TOKEN;
+
+    public Grammar(){
+    }
+
+    public String getToken(){
+        Scanner t = new Scanner(System.in);
+
+        TOKEN = t.nextLine();
+        return TOKEN;
+    }
+
+    public void success(){
+        System.out.println("CORRECT");
+    }
+
+    public void fail(){
+        System.out.println("INCORRECT!");
+        System.exit(0);
+    }
+
+    public void begin_parsing(){
+        routine_declaration();
+        /*
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a string: ");
+        String word;
+        word = input.nextLine();
+
+        if(is_integer(word)){
+            System.out.println(word);
+        }
+        else{
+            System.out.println("Nope");
+        }
+        */
+    }
+
+    public void routine_declaration(){
+        getToken();
+        if(TOKEN.equals("defprog")){
+            getToken();
+            if(is_identifier(TOKEN)){
+                getToken();
+                if(TOKEN.equals("<")){
+                    getToken();
+                    if(is_identifier(TOKEN)){
+                        param_sequence();
+                    }
+                    if(TOKEN.equals(">")){
+                        getToken();
+                        if(TOKEN.equals("blip")){
+                            getToken();
+                            statement_sequence();
+                            if(TOKEN.equals("blorp")){
+                                success();
+                            }
+                            else{
+                                fail();
+                            }
+                        }
+                        else{
+                            fail();
+                        }
+                    }
+                    else{
+                        fail();
+                    }
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+        return;
+    }
+
+    public void statement_sequence(){
+        statement();
+        while(is_first(TOKEN)){
+            statement();
+        }
+        return;
+    }
+
+    public void statement(){
+        if(is_identifier(TOKEN)){
+            assignment();
+        }
+        else if(TOKEN.equals("if")){
+            if_statement();
+        }
+        else if(TOKEN.equals("while")){
+            loop_statement();
+        }
+        else if(TOKEN.equals("inc")){
+            inc_statement();
+        }
+        else if(TOKEN.equals("print")){
+            print_statement();
+        }
+        else if(TOKEN.equals("ret")){
+            return_statement();
+        }
+        return;
+    }
+
+    public void param_sequence(){
+        getToken();
+        while(!TOKEN.equals(">")){
+            if(TOKEN.equals(",")){
+                getToken();
+                if(is_identifier(TOKEN)){
+                    getToken();
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+        return;
+    }
+
+    public void expression(){
+        simple_expression();
+        if(is_relation(TOKEN)){
+            getToken();
+            simple_expression();
+        }
+        return;
+    }
+
+    public void simple_expression(){
+        term();
+        while(is_add_operator(TOKEN)){
+            getToken();
+            term();
+        }
+        return;
+    }
+
+    public void term(){
+        factor();
+        while(is_mul_operator(TOKEN)){
+            getToken();
+            factor();
+        }
+        return;
+    }
+
+    public void factor(){
+        if(is_integer(TOKEN)){
+            getToken();
+        }
+        else if(is_decimal(TOKEN)){
+            getToken();
+        }
+        else if(is_string(TOKEN)){
+            getToken();
+        }
+        else if(is_identifier(TOKEN)){
+            getToken();
+        }
+        else if(TOKEN.equals("(")){
+            getToken();
+            expression();
+            if(TOKEN.equals(")")){
+                getToken();
+            }
+            else{
+                fail();
+            }
+        }
+        else if(TOKEN.equals("~")){
+            getToken();
+            factor();
+        }
+        else{
+            fail();
+        }
+        return;
+    }
+
+    public void assignment(){
+        if(is_identifier(TOKEN)){
+            getToken();
+            if(TOKEN.equals("<=")){
+                getToken();
+                expression();
+                if(TOKEN.equals("!")){
+                    getToken();
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+
+    public void inc_statement(){
+        if(TOKEN.equals("inc")){
+            getToken();
+            if(is_identifier(TOKEN)){
+                getToken();
+                if(TOKEN.equals("!")){
+                    getToken();
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+    }
+
+    public void if_statement(){
+        if(TOKEN.equals("if")){
+            getToken();
+            if(TOKEN.equals("<")){
+                getToken();
+                expression();
+                if(TOKEN.equals(">")){
+                    getToken();
+                    statement_sequence();
+                    if(TOKEN.equals("else")){
+                        getToken();
+                        statement_sequence();
+                    }
+                    if(TOKEN.equals("fi")){
+                        getToken();
+                    }
+                    else{
+                        fail();
+                    }
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+        return;
+    }
+
+    public void loop_statement(){
+        if(TOKEN.equals("while")){
+            getToken();
+            if(TOKEN.equals("<")){
+                getToken();
+                expression();
+                if(TOKEN.equals(">")){
+                    getToken();
+                    statement_sequence();
+                    if(TOKEN.equals("elihw")){
+                        getToken();
+                    }
+                    else{
+                        fail();
+                    }
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+        return;
+    }
+
+    public void print_statement(){
+        if(TOKEN.equals("print")){
+            getToken();
+            if(is_identifier(TOKEN)){
+                getToken();
+                if(TOKEN.equals("!")){
+                    getToken();
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+
+    public void return_statement(){
+        if(TOKEN.equals("ret")){
+            getToken();
+            if(is_identifier(TOKEN)){
+                getToken();
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+
+    /* --------------- */
+    public boolean is_first(String s){
+        if(is_identifier(TOKEN) || TOKEN.equals("if") || TOKEN.equals("while")
+                || TOKEN.equals("print") || TOKEN.equals("inc") || 
+                TOKEN.equals("ret")){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean is_integer(String s){ 
+        return s.matches(REG_INTEGER);
+    }
+
+    public boolean is_decimal(String s){
+        return s.matches(REG_DECIMAL);
+    }
+
+    public boolean is_string(String s){
+        return s.matches(REG_STRING);
+    }
+
+    public boolean is_keyword(String s){
+        return s.matches(REG_KEYWORD);
+    }
+
+    public boolean is_identifier(String s){
+        return s.matches(REG_IDENTIFIER) && !is_keyword(s);
+    }
+
+    public boolean is_relation(String s){
+        //return s.matches(REG_RELATION);
+        return(s.equals("lt") || s.equals("gt") || s.equals("eq"));
+    }
+
+    public boolean is_add_operator(String s){
+        return (s.equals("+") || s.equals("-") || s.equals("or"));
+    }
+
+    public boolean is_mul_operator(String s){
+        return (s.equals("*") || s.equals("/") || s.equals("and"));
+    }
+
+}
+

@@ -1,0 +1,7 @@
+{% extends 'showcase/base.html' %}
+
+{% block content %}
+    <h2> Resume </h2>
+    <p> A detailed look at my skills </p>
+    <a href="{% url 'showcase:home' %}">Home</a>
+{% endblock %}

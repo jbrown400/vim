@@ -1,0 +1,88 @@
+/*
+ * Custom Layout CSS
+ *
+ */
+
+/* Override some lumx stuff to center buttons */
+
+#c-button--push-left {
+  position: relative;
+  top: -7.5px;
+}
+
+.custom-form {
+  margin-top: 20px;
+  margin-left: 5%;
+  margin-right: 5%;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+@media (min-width: 1000px){
+    .mobile {
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 1001px){
+    .desktop {
+        visibility: hidden;
+    }
+    .mFont {
+        background-color: red;
+        font-size: 70px;
+    }
+}
+
+.md-track-ticks {
+  display: none;
+}
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+/* CSS for the image cycling */
+
+#cycler {
+    position:relative;
+}
+#cycler img {
+    position:absolute;
+    z-index:1;
+    width: 100%;
+    height: 450px;
+}
+#cycler img.active {z-index:3}
+
+.multi_column {
+    -webkit-column-count: 2; /* For Chrome */
+    -moz-column-count: 2; /* For Firefox */
+    column-count: 2;
+}
+=======
+>>>>>>> 1b8f065fd9805d577aa0da17fcaafcdde26b99e2
+=======
+
+
+/* CSS for the image cycling */
+.cyc {
+    height: 450px;
+    margin: 0 auto 30px auto;
+    vertical-align: middle;
+    position:relative;
+    overflow: hidden;
+
+
+}
+
+#cycler img {
+    position:absolute;
+    z-index:1;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: 50% 0 no-repeat fixed;
+}
+
+#cycler img.active {
+  z-index:3;
+}
+>>>>>>> 5495feb1606a305413e739a5c3f867c57e89769a

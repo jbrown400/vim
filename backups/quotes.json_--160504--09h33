@@ -1,0 +1,64 @@
+{
+    "quotes": [
+        {
+            "text": "Java is to javascript as car is to carpet.",
+            "author": "Chris Heilmann"
+        },
+        {
+            "text": "It's hard enough to find an error in your code when you're looking for it; it's even harder when you've assumed your code is error-free. ",
+            "author": "Steve McConnell"
+        },
+        {
+            "text": "Software sucks because users demand it to.",
+            "author": "Nathan Myhrvold"
+        },
+        {
+            "text": "Walking on water and developing software from a specification are easy if both are frozen.",
+            "author": "Edward V Berard"
+        },
+        {
+            "text": "First, solve the problem. Then, write the code.",
+            "author": "John Johnson"
+        },
+        {
+            "text": "There is not now, nor has there ever been, nor will there ever be, any programming language in which it is the least bit difficult to write bad code.",
+            "author": "Fion's Law"
+        },
+        {
+            "text": "The first 90% of the code accounts for the first 90% of the development time. The remaining 10% of the code accounts for the other 90% of the development time.",
+            "author": "Tom Cargill"
+        },
+        {
+            "text": "Good code is its own best documentation. As you're about to add a comment, ask yourself, \"How can I improve the code so that this comment isn't needed?\" Improve the code and then document it to make it even clearer.",
+            "author": "Steve McConnell"
+        },
+        {
+            "text": "Programs must be written for people to read, and only incidentally for machines to execute.",
+            "author": "Abelson / Sussman"
+        },
+        {
+            "text": "Programming can be fun, so can cryptography; however they should not be combined.",
+            "author": "Kreitzberg and Shneiderman"
+        },
+        {
+            "text": "Copy and paste is a design error.",
+            "author": "David Parnas"
+        },
+        {
+            "text": "Before software can be reusable it first has to be usable.",
+            "author": "Ralph Johnson"
+        },
+        {
+            "text": "Without requirements or design, programming is the art of adding bugs to an empty text file.",
+            "author": "Louis Srygley"
+        },
+        {
+            "text": "Computers are good at following instructions, but not at reading your mind.",
+            "author": "Donnald Knuth"
+        },
+        {
+            "text": "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.",
+            "author": "Eagleson's Law"
+        }
+    ]
+}

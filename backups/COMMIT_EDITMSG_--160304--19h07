@@ -1,0 +1,37 @@
+Merge branch 'master' of github.com:brhoades/sweaters-but-with-peer-reviews
+
+# Conflicts:
+#	browse/templates/browse/index.html
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch and 'origin/master' have diverged,
+# and have 2 and 11 different commits each, respectively.
+#   (use "git pull" to merge the remote branch into yours)
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified:   browse/static/browse/css/main.css
+#	modified:   browse/static/browse/scss/base.scss
+#	modified:   browse/templates/browse/base.html
+#	modified:   browse/templates/browse/index.html
+#	modified:   browse/templates/browse/professors.html
+#	modified:   browse/views.py
+#	modified:   middleware/links.py
+#	modified:   new/templates/new/review.html
+#	modified:   new/templates/new/school.html
+#	modified:   new/templates/new/tags/professor.html
+#	modified:   new/templates/new/tags/review.html
+#	new file:   new/templates/new/tags/review_popup .html
+#	new file:   new/templates/new/tags/review_popup.html
+#	new file:   new/templates/new/tags/school_popup.html
+#	modified:   new/templatetags/formlets.py
+#

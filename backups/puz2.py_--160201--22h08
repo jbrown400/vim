@@ -1,0 +1,25 @@
+#Justin Brown
+#A. I. Puzzle 2 (Spring 2016)
+#Color Connect
+
+'''This program will take in a file containing an integer defining the size, an integer defining the 
+	number of colors, and a map. The goal of the program is to "connect" each color on the map.
+	The program will then create a data structure to house the necessary data and run the 
+	Breadth-First-Search algorithm (which will utilize the data structure) on the map. The result will be 
+	a new map with each color connected.
+'''
+
+import sys                  #used for parsing arguements
+import time                 #used for keepying track of time
+from copy import deepcopy   #used for copying Nodes
+
+
+class Node(object):
+	def __init__(self):
+
+
+
+'''Main Body'''
+f = open(sys.argv[1], "r")
+ti = time.clock()
+contraints = f.readline()

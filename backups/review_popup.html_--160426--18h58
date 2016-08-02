@@ -1,0 +1,18 @@
+{% load formlets %}
+
+<lx-dialog class="dialog dialog--l" id="reviewCall" auto-close="true"
+           onclose="closingDialog()" onscrollend="scrollEndDialog()" onClick="kiipInstance.postMoment('Registering!')">
+  <div class="dialog__header">
+    <div id="popup" class="toolbar pl++">
+      <span class="toolbar__label tc-white fs-title">
+        {% if not is_edit %}
+          New Review
+        {% else %}
+          Edit Review
+        {% endif %}
+      </span>
+    </div>
+  </div>
+
+  {% new_review is_edit %}
+</lx-dialog>

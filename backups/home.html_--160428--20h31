@@ -1,0 +1,186 @@
+{% extends 'showcase/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<!--
+<div class="ui shape" id="projects">
+    <div class="ui card">
+        <div class="sides">
+            <div class="container">
+                <div class="active side">
+                        <h1>Header</h1>
+                </div>
+                <div class="side">
+                        <h1>This header should take up more space than the other one.</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
+<div class="ui stackable cards container">
+    <div class="card" id=projects">
+        <div class="ui card">
+            <h1 class="ui green center aligned header">
+                Projects
+            </h1>
+            <div class="center aligned">
+                <i class="massive green cubes icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="ui card">
+            <h1 class="ui green center aligned header">
+                Projects
+            </h1>
+            <div class="center aligned">
+                <i class="massive green cubes icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="ui card">
+            <h1 class="ui green center aligned header">
+                Projects
+            </h1>
+            <div class="center aligned">
+                <i class="massive green cubes icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="ui card">
+            <h1 class="ui green center aligned header">
+                Projects
+            </h1>
+            <div class="center aligned">
+                <i class="massive green cubes icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+<div class="ui six column centered grid" id="main-home-content">
+    <div class="column">
+        <a href="{% url 'showcase:projects' %}">
+            <div class="ui shape">
+                <div class="sides">
+                    <div class="content">
+                    <div class="active side">
+                        <div class="set-size">
+                            <div class="ui card">
+                                    <h1 class="ui green center aligned header">
+                                        Projects
+                                    </h1>
+                                    <div class="center aligned">
+                                        <i class="massive green cubes icon"></i>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side">
+                        <div class="set-size">
+                            <div class="ui card">
+                                    <h2 class="ui green center aligned header">
+                                        View Projects I Have Completed Or Are Currently Working On
+                                    </h2>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="column">
+        <a href="{% url 'showcase:concepts' %}">
+            <div class="ui shape" id="concepts">
+                <div class="sides">
+                    <div class="active side">
+                        <div class="ui card">
+                            <div class="content">
+                                <h1 class="ui green center aligned header">
+                                    Concepts
+                                </h1>
+                                <div class="center aligned">
+                                    <i class="massive green cube icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side">
+                        <div class="ui card">
+                            <div class="content">
+                                <h2 class="ui green center aligned header">
+                                    Important Concepts Used In My Projects
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="column">
+        <a href="{% url 'showcase:resume' %}">
+            <div class="ui shape" id ="resume">
+                <div class="sides">
+                    <div class="active side">
+                        <div class="ui card">
+                            <div class="content">
+                                <h1 class="ui green center aligned header">
+                                    Resume
+                                </h1>
+                                <div class="center aligned">
+                                    <i class="massive green file text icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side">
+                        <div class="ui card">
+                            <div class="content">
+                                <h2 class="ui green center aligned header">
+                                    Detailed Resume
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="column">
+        <a href="{% url 'showcase:interests' %}">
+            <div class="ui shape" id="interests">
+                <div class="sides">
+                    <div class="active side">
+                        <div class="ui card">
+                            <div class="content">
+                                <h1 class="ui green center aligned header">
+                                    Interests
+                                </h1>
+                                <div class="center aligned">
+                                    <i class="massive green camera retro icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side">
+                        <div class="ui card">
+                            <div class="content">
+                                <h2 class="ui green center aligned header">
+                                    Interests And Hobbies Of Mine
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+-->
+{% endblock %}

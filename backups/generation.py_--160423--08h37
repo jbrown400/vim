@@ -1,0 +1,332 @@
+# Houses the function that generates ONLY VALID moves for this round
+from games.chess.piece import Piece
+from games.chess.sim_move import Sim
+from games.chess.piece_move import movePawn, moveRook, moveKnight, moveBishop,\
+        moveQueen, moveKing
+
+
+# Pre: None
+# Post: Returns every possible move your player can make (that will not
+#       result in your king being put into check
+def generateMoves(self, _my_pieces, _op_pieces, history_table=[]):
+    moves = []
+    # prevent multiple checks for castling
+    castle = False
+    # For each piece, generate all possible moves it can make
+    for p in _my_pieces:
+        tmp_move = [] 
+        # Generate list of all moves
+        if(p.type == "Pawn"):
+            tmp_move.extend(movePawn(self, p, _my_pieces, _op_pieces))
+        elif(p.type == "Rook"):
+            tmp_move.extend(moveRook(p, _my_pieces, _op_pieces))
+        elif(p.type == "Knight"):
+            tmp_move.extend(moveKnight(p, _my_pieces, _op_pieces))
+        elif(p.type == "Bishop"):
+            tmp_move.extend(moveBishop(p, _my_pieces, _op_pieces))
+        elif(p.type == "King"):
+            tmp_move.extend(moveKing(p, _my_pieces, _op_pieces))
+        elif(p.type == "Queen"):
+            tmp_move.extend(moveQueen(p, _my_pieces, _op_pieces))
+        
+        # For each possible move, see if it would result in check
+        for x in tmp_move:
+            # See if move would result in board repetition
+            # Check the moves 0, 1, 2 against 4, 5, 6 and then use the
+            # predicted move (which would be 8) against 3.
+            if(checkRepeatedBoardState(self, x) is True):
+                continue
+
+            # Copy my current list of pieces as to not alter the original
+            tmp_list = copy_pieces(_my_pieces)
+
+            # Make a copy of the oppoents pieces
+            tmp_op_list = copy_pieces(_op_pieces)
+
+            # If the current move attacks any piece, remove that piece from
+            # the list of opponents pieces
+            for o in tmp_op_list:
+                if(o.file == x.sim_file and o.rank == x.sim_rank and o.type != "King"):
+                    # if this pieces' avenge variable is set to false, increase
+                    # the value of the move.
+                    if(o.can_be_avenged is False):
+                        x.setSimMoveValue(x.value + 17)
+                    tmp_op_list.remove(o)
+                    break
+            # Pick out the peice from my tmp list of pieces and alter
+            # the rank and file so the test for check can be done
+            for y in tmp_list:
+                if y.id == x.piece.id:
+                    y.setFile(x.sim_file)
+                    y.setRank(x.sim_rank)
+                    break
+            king = getKing(tmp_list)
+            if checkCheck(king, tmp_list, tmp_op_list):
+                # Now that the move has been deemed valid, check history table
+                if history_table:
+                    for h in history_table:
+                        if h.piece.type == x.piece.type:
+                            if h.sim_rank == x.sim_rank and h.sim_file == x.sim_file:
+                                x.history_table_count = h.history_table_count
+                                break
+                # Append the move
+                moves.append(x)
+            if p.type == "King" and castle is False and p.has_moved is False:
+                c = castling(self, p, tmp_list, _op_pieces)
+                castle = True
+                if c:
+                    moves.extend(c)
+            
+            del tmp_list
+    return moves
+
+
+# Pre: None
+# Post: Returns the player's or opponents King, depending on what is passed
+def getKing(list_of_pieces):
+    # _list_of_pieces will either be your own pieces or your opponents pieces
+    for x in list_of_pieces:
+        if x.type == "King":
+            return x
+    return False
+
+
+def copy_pieces(list_of_pieces):
+    new_list = []
+    for x in list_of_pieces:
+        tmp = Piece()
+        tmp.setRank(x.rank)
+        tmp.setFile(x.file)
+        tmp.setType(x.type)
+        tmp.setOwner(x.owner)
+        tmp.setPieceValue(x.getPieceValue())
+        tmp.setPieceID(x.id)
+        if x.type == "Pawn" or x.type == "King" or x.type == "Rook":
+            tmp.setHasMoved(x.has_moved)
+        new_list.append(tmp)
+    return new_list
+
+
+def checkCheck(p, _my_pieces, _op_pieces):
+    Up = True
+    Down = True
+    Right = True
+    Left = True
+    up_left = True
+    up_right = True
+    down_left = True
+    down_right = True
+
+    for m in range(1, 8):
+        if(up_left is False and up_right is False and down_left is False and
+                down_right is False and Up is False and Down is False and
+                Right is False and Left is False):
+            break
+        for x in _my_pieces + _op_pieces:
+            # if can still move up
+            if(Up is True):
+                # if the current piece matches the location
+                if(x.file == p.file and x.rank == p.rank + m):
+                    if(p.owner.color != x.owner.color):
+                        # checking for king
+                        if(m == 1 and x.type == "King"):
+                            return False
+                        if(x.type == "Queen" or x.type == "Rook"):
+                            return False
+                    # else it's your own piece
+                    else:
+                        Up = False
+            if(Down is True):
+                if(x.file == p.file and x.rank == p.rank - m):
+                    if(p.owner.color != x.owner.color):
+                        if(m == 1 and x.type == "King"):
+                            return False
+                        if(x.type == "Queen" or x.type == "Rook"):
+                            return False
+                    else:
+                        Down = False
+
+            if(Right is True):
+                if(x.file == chr(ord(p.file) + m) and x.rank == p.rank):
+                    if(p.owner.color != x.owner.color):
+                        if(m == 1 and x.type == "King"):
+                            return False
+                        if(x.type == "Queen" or x.type == "Rook"):
+                            return False
+                    else:
+                        Right = False
+
+            if(Left is True):
+                if(x.file == chr(ord(p.file) - m) and x.rank == p.rank):
+                    if(p.owner.color != x.owner.color):
+                        if(m == 1 and x.type == "King"):
+                            return False
+                        if(x.type == "Queen" or x.type == "Rook"):
+                            return False
+                    else:
+                        Left = False
+
+            if(up_left is True):
+                if(x.file == chr(ord(p.file) - m) and x.rank == p.rank + m):
+                    if(p.owner.color != x.owner.color):
+                        if(m == 1):
+                            if(x.type == "King"):
+                                return False
+                            if(x.owner.color == "Black" and x.type == "Pawn"):
+                                return False
+                        if(x.type == "Queen" or x.type == "Bishop"):
+                            return False
+                    else:
+                        up_left = False
+
+            if(up_right is True):
+                if(x.file == chr(ord(p.file) + m) and x.rank == p.rank + m):
+                    if(p.owner.color != x.owner.color):
+                        if(m == 1):
+                            if(x.type == "King"):
+                                return False
+                            if(x.owner.color == "Black" and x.type == "Pawn"):
+                                return False
+                        if(x.type == "Queen" or x.type == "Bishop"):
+                            return False
+                    else:
+                        up_right = False
+
+            if(down_left is True):
+                if(x.file == chr(ord(p.file) - m) and x.rank == p.rank - m):
+                    if(p.owner.color != x.owner.color):
+                        if(m == 1):
+                            if(x.type == "King"):
+                                return False
+                            if(x.owner.color == "White" and x.type == "Pawn"):
+                                return False
+                        if(x.type == "Queen" or x.type == "Bishop"):
+                            return False
+                    else:
+                        down_left = False
+
+            if(down_right is True):
+                if(x.file == chr(ord(p.file) + m) and x.rank == p.rank - m):
+                    if(p.owner.color != x.owner.color):
+                        if(m == 1):
+                            if(x.type == "King"):
+                                return False
+                            if(x.owner.color == "White" and x.type == "Pawn"):
+                                return False
+                        if(x.type == "Queen" or x.type == "Bishop"):
+                            return False
+                    else:
+                        down_right = False
+            # check possible knight attacks
+            if(x.type == "Knight" and x.owner.color != p.owner.color):
+                if((chr(ord(p.file) + 2) + str(p.rank + 1)) == (x.file + str(x.rank))):
+                    return False
+                if((chr(ord(p.file) + 1) + str(p.rank + 2)) == (x.file + str(x.rank))):
+                    return False
+                if((chr(ord(p.file) + 2) + str(p.rank - 1)) == (x.file + str(x.rank))):
+                    return False
+                if((chr(ord(p.file) + 1) + str(p.rank - 2)) == (x.file + str(x.rank))):
+                    return False
+                if((chr(ord(p.file) - 2) + str(p.rank - 1)) == (x.file + str(x.rank))):
+                    return False
+                if((chr(ord(p.file) - 1) + str(p.rank - 2)) == (x.file + str(x.rank))):
+                    return False
+                if((chr(ord(p.file) - 2) + str(p.rank + 1)) == (x.file + str(x.rank))):
+                    return False
+                if((chr(ord(p.file) - 1) + str(p.rank + 2)) == (x.file + str(x.rank))):
+                    return False
+    return True
+
+def checkCheckMate(p, my_pieces, op_pieces, moves):
+    if checkCheck(p, my_pieces, op_pieces) and len(moves) == 0:
+        return True
+    else:
+        return False
+
+
+def castling(self, p, _my_pieces, _op_pieces):
+
+    other_moves = []
+    for o in _op_pieces:
+        # Need to check to see if moving into attack range of Pawns
+        if(o.type == "Pawn"):
+            # Check for Pawn attacks
+            if(o.owner.color == "Black"):
+                v = -1
+            elif(o.owner.color == "White"):
+                v = 1
+            # Check attack
+            if(any((chr(ord(o.file) + 1) + str(o.rank + v)) == (x.file + str(x.rank)) for x in _my_pieces)):
+                other_moves.append(Sim(o, chr(ord(o.file) + 1), o.rank + v, 0))
+            if(any((chr(ord(o.file) - 1) + str(o.rank + v)) == (x.file + str(x.rank)) for x in _my_pieces)):
+                other_moves.append(Sim(o, chr(ord(o.file) - 1), o.rank + v, 0))
+        # Pass it a list of only itself to create any possible
+        # move (including avenging its own pieces)
+            other_moves.extend(movePawn(self, o, [o], _my_pieces))
+        elif(o.type == "Rook"):
+            other_moves.extend(moveRook(o, [o], _my_pieces))
+        elif(o.type == "Knight"):
+            other_moves.extend(moveKnight(o, [o], _my_pieces))
+        elif(o.type == "Bishop"):
+            other_moves.extend(moveBishop(o, [o], _my_pieces))
+        elif(o.type == "King"):
+            other_moves.extend(moveKing(o, [o], _my_pieces))
+        elif(o.type == "Queen"):
+            other_moves.extend(moveQueen(o, [o], _my_pieces))
+
+    castle_moves = []
+    # Check for castling
+    # Get variables for different ranks between black and white
+    if(p.owner.color == "White"):
+        v = 1
+    elif(p.owner.color == "Black"):
+        v = 8
+    # If not in check
+    if(p.owner.in_check is False and p.has_moved is False):
+        # Check for rook moves
+        for x in _my_pieces:
+            # If the rooks in file "a" have not moved
+            if(x.type == "Rook" and x.has_moved is False and x.file == "a"):
+                # If there are no piece between them
+                inBetween = False
+                possibleAttack = False
+                for y in _my_pieces:
+                    # If there are no pieces between the King and rook
+                    if(y.rank == v and ord(y.file) in range(ord("b"), ord("e"))):
+                        inBetween = True
+                for z in other_moves:
+                    # If there are any attack positions between castling
+                    if(z.sim_rank == v and ord(z.sim_file) in range(ord("b"), ord("e"))):
+                        possibleAttack = True
+                if(inBetween is False and possibleAttack is False):
+                    castle_moves.append(Sim(p, "c", v, 0))
+            # If the rooks in file "h" have not moved
+            if(x.type == "Rook" and x.has_moved is False and x.file == "h"):
+                inBetween = False
+                possibleAttack = False
+                for y in _my_pieces:
+                    if(y.rank == v and ord(y.file) in range(ord("f"), ord("h"))):
+                        inBetween = True
+                for z in other_moves:
+                    # If there are any attack positions between castling
+                    if(z.sim_rank == v and ord(z.sim_file) in range(ord("f"), ord("h"))):
+                        possibleAttack = True
+                if(inBetween is False and possibleAttack is False):
+                    castle_moves.append(Sim(p, "g", v, 0))
+    return castle_moves
+
+
+def checkRepeatedBoardState(self, _x):
+    repeated_board = True
+    if(len(self.game.moves) >= 8):
+        for r in reversed(range(1, 4)):
+            if(not(self.game.moves[-r].to_file == self.game.moves[-r - 4].to_file and
+                    self.game.moves[-r].to_rank == self.game.moves[-r - 4].to_rank)):
+                repeated_board = False
+        # Check the predicted move (if all three previous states match)
+        if(repeated_board is True):
+            if(not(self.game.moves[-4].to_file == _x.sim_file and
+                    self.game.moves[-4].to_rank == _x.sim_rank)):
+                repeated_board = False
+        if(repeated_board is True):
+            return True

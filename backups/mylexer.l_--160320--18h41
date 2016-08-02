@@ -1,0 +1,52 @@
+/* Justin Brown */
+/* Homework 2 Lexical Analyser Using Flex */
+/* Programming Languages and Translators SP2016 */
+
+
+%{
+#include <iostream>
+using namespace std;
+int num_lines = 0
+%}
+
+/* Tell flex to read only one input file */
+%option noyywrap
+
+/* RULES */
+DIGIT         [0-9]
+INT_CONST     (\+|-)?{DIGIT}
+DEC_CONST     {INT_CONST}"."{DIGIT}
+SCI_CONST     {DEC_CONST}E(0*[1-9]+{DIGIT}*)
+HEX_CONST     [0-9A-F]+H
+KEYWORD       (if|else|func|let|while)
+IDENTIFIER    [a-zA-Z][a-z[A-Z0-9]*
+STR_CONST     \"[a-zA-Z0-9]*\"
+OPERATOR      (\+|-|\*|\/){1}
+COMMENT       %(.*)
+
+%%
+
+/* REG EX */
+
+
+[ \t]           ;
+{COMMENT};      ;
+\n              { num_lines++; }
+{INT_CONST}     { cout << "Token: " << "INT_CONST " << "Lexeme: " << yytext << endl; }
+{DEC_CONST}     { cout << "Token: " << "DEC_CONST " << "Lexeme: " << yytext << endl; }
+{SCI_CONST}     { cout << "Token: " << "SCI_CONST " << "Lexeme: " << yytext << endl; }
+{HEX_CONST}     { cout << "Token: " << "HEX_CONST " << "Lexeme: " << yytext << endl; }
+{KEYWORD}       { cout << "Token: " << "KEYWORD " << "Lexeme: " << yytext << endl; }
+{IDENTIFIER}    { cout << "Token: " << "IDENTIFIER " << "Lexeme: " << yytext << endl; }
+{STR_CONST}     { cout << "Token: " << "STR_CONST " << "Lexeme: " << yytext << endl; }
+{OPERATOR}      { cout << "Token: " << "OPERATOR " << "Lexeme: " << yytext << endl; }
+.               { cout << "Token: " << "? " << "Lexeme: " << yytext << endl; 
+
+%%
+
+
+int main() {
+    yylex();
+    cout << num_lines << " lines handled." << endl;
+    return 0;
+}

@@ -1,0 +1,28 @@
+<ion-view view-title="Ingredients">
+    <ion-content>
+        <ion-list>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Item 1
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Item 1
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Item 1
+                    </div>
+                </ion-checkbox>
+            </div>
+        </ion-list>
+
+    </ion-content>
+</ion-view>

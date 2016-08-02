@@ -1,0 +1,26 @@
+# This file houses the Iterative-Deepening Depth Limited Minimax function and 
+# the "sub-functions" min-value and max-value
+# The heuristic will be "typical" point value for pieces while also accounting
+# for draws and wins
+
+def miniMax():
+    max_level = 4
+    value = -1
+    # For loop for iterative deepening
+    for x in range(1, max_level):
+        tmp = max_value(x)
+        if(tmp > value):
+            value = tmp
+    return value
+
+
+# The opponent
+def min_value(_level):
+    # If terminal state, return utility (0 if no capture, point value if capture)
+    pass
+
+
+# My player
+def max_value(_level):
+    # If terminal state, return utility (0 if no capture, point value if capture)
+    pass

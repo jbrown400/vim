@@ -1,0 +1,39 @@
+#Justin Brown
+#Artificial Intelligence (Sp 2016)
+#Phase 3
+#Greedy Best-First Search
+
+
+import sys
+import time
+
+
+class Node(object):
+    def __init__(self, current_state, start, end, actions):
+        self.current_state = current_state
+        self.start = start
+        self.end = end
+        self.action = actions
+
+    #Pre: None
+    #Post: Adds updated start coordinates for a new Node
+    def add_start(self, c, x, y):
+        self.start[c] = [x, y]
+    #Pre: None
+    #Post: Adds ending coordinates for a Node
+    def add_end(self, c, x, y, f):
+        self.end[c] = [x, y, f]
+    #Pre: None
+    #Post: returns a copy of the passed Node
+    def copy(other):
+        start = {}
+        end = {}
+        for x in other.start:
+            start[x] = other.start[x][:]
+        for x in other.end:
+            start[x] = other.start[x][:]
+
+        return Node([x[:] for x in other.current_state], start, end, [x[:] for x in other.actions])
+
+#Greedy Best-First Search
+

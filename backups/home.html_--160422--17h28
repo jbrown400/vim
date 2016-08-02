@@ -1,0 +1,7 @@
+<h2>This is the homepage :D </h2>
+<ul>
+    <li><a href="{% url 'showcase:resume' %}">Resume</a></li>
+    <li><a href="{% url 'showcase:projects' %}">Current Projects</a></li>
+    <li><a href="{% url 'showcase:fundamentals' %}">Fundamentals</a></li>
+    <li><a href="{% url 'showcase:interests' %}">Interests</a></li>
+</ul>

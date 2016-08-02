@@ -1,0 +1,10 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch fb-userexperience
+# Changes to be committed:
+#	modified:   browse/static/browse/js/main.js
+#	modified:   browse/static/browse/scss/base.scss
+#	modified:   browse/templates/browse/base.html
+#	modified:   browse/templates/browse/index.html
+#

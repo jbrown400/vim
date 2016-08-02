@@ -1,0 +1,58 @@
+<ion-view view-title="Cook N&uumlk">
+  <ion-content>
+    <div class="grid">
+		    <div class="row1">
+	    		<div class="col-3">
+         <div class="asain">
+           <h3>Asain</h3>
+         </div>
+	    		</div>
+	    		<div class="col-3">
+	    			<a href="#/app/cooknuk/:foodtypeId">
+		    			<div class="mexican">
+		    				<h3>Mexican</h3>
+		    			</div>
+	    			</a> 
+	    		</div>
+	    		<div class="col-3">
+	    			<div class="greek">
+	    				<h3>Greek</h3>
+	    			</div>
+	    		</div>
+	    	</div>
+	    <div class="row1">
+	    		<div class="col-3">
+	    			<div class="american">
+	    				<h3>American</h3>
+	    			</div>
+	    		</div>
+	    		<div class="col-3">
+	    			<div class="italian">
+	    				<h3>Italian</h3>
+	    			</div>
+	    		</div>
+	    		<div class="col-3">
+	    			<div class="ethiopian">
+	    				<h3>Ethiopian</h3>
+	    			</div>
+	    		</div>
+	    	</div>
+	   </div>
+     <div>
+         <div style="font-size:25px;padding:20px;">Save Your Supper</div>
+         <ion-slide-box>
+             <ion-slide style="overflow:auto; text-align:center;padding-bottom:30px;">
+                 <div class="card" style="display:inline-block;width:18%;text-align:center;height:40px;">Monday</div>
+                 <div class="card" style="display:inline-block;width:18%;text-align:center;height:40px;">Tuesday</div>
+                 <div class="card" style="display:inline-block;width:18%;text-align:center;height:40px;">Wednesday</div>
+                 <div class="card" style="display:inline-block;width:18%;text-align:center;height:40px;">Thursdsay</div>
+             </ion-slide>
+             <ion-slide style="overflow:auto;text-align:center;padding-bottom:30px;">
+                 <div class="card" style="display:inline-block;width:25%;text-align:center;height:40px;">Friday</div>
+                 <div class="card" style="display:inline-block;width:25%;text-align:center;height:40px;">Saturday</div>
+                 <div class="card" style="display:inline-block;width:25%;text-align:cetner;height:40px;">Sunday</div>
+             </ion-slide>
+         </ion-slide-box>
+     </div>
+  </ion-content>
+</ion-view>

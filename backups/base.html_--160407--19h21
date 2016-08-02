@@ -1,0 +1,178 @@
+{% load staticfiles %}
+{% load sass_tags %}
+{% load authentication %}
+{% load gravatar %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardigans but with Peer Reviews - {% block title %}Default{% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'browse/css/main.css' %}">
+    <link href="{% sass_src "browse/scss/base.scss" %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'browse/css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'browse/css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'browse/Slide-Push-Menus/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'browse/bower_components/jquery-ui.min.css' %}">
+
+    <!-- slider -->
+    <link rel="stylesheet" href="{% static 'browse/bower_components/angular-material/angular-material.min.css' %}">
+    <link rel="stylesheet" href="{% static 'browse/Slide-Push-Menus/css/style.min.css' %}">
+    <!-- lumx dependencies -->
+    <script src="{% static 'browse/bower_components/jquery/dist/jquery.js' %}"></script>
+    <script src="{% static 'browse/bower_components/velocity/velocity.js' %}"></script>
+    <script src="{% static 'browse/bower_components/moment/min/moment-with-locales.js' %}"></script>
+    <script src="{% static 'browse/bower_components/angular/angular.js' %}"></script>
+    <script src="{% static 'browse/bower_components/lumx/dist/lumx.js' %}"></script>
+
+    <!-- side bar dependencies -->
+    <script src="{% static 'browse/Slide-Push-Menus/js/src/menu.js' %}"></script>
+
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="{% static 'browse/bower_components/angular-animate/angular-animate.min.js' %}"></script>
+    <script src="{% static 'browse/bower_components/angular-aria/angular-aria.min.js' %}"></script>
+    <script src="{% static 'browse/bower_components/angular-messages/angular-messages.min.js' %}"></script>
+
+    <!-- Angular Material Library -->
+    <script src="{% static 'browse/bower_components/angular-material/angular-material.min.js' %}"></script>
+
+    <script>
+      var app = angular.module('lumxWrap', ['lumx', 'ngMaterial', 'ngMessages']);
+    </script>
+
+    <script src="{% static 'browse/js/libs/jquery-ui.min.js' %}"></script>
+
+    <!-- Custom js files -->
+    <script src="{% static 'browse/js/script.js' %}"></script>
+    <script src="{% static 'browse/js/index.js' %}"></script>
+    <script src="{% static 'browse/bower_components/lumx/modules/dialog/js/dialog_directive.js' %}"></script>
+    <script src="{% static 'browse/js/main.js' %}"></script>
+
+    {% block js %}{% endblock %}
+    {% block header %}{% endblock %}
+  </head>
+
+  <body class="background-color">
+    <div class="top-bar bgc-light-blue-800"></div>
+    <div ng-app="lumxWrap" ng-controller="leftCtrl">
+      <div class="toolbar">
+        <div class="toolbar__left mr+++ mobile">
+          <button id="c-button--push-left" class="btn btn--xl btn--white btn--icon" lx-ripple
+                  ng-click="toggle()">
+           <i class="mdi mdi-menu"></i>
+          </button>
+        </div>
+
+        <div class="small_logo">
+            <img src="{% static 'browse/img/Logo_PNG.png' %}">
+        </div>
+        <div class="desktop nav-buttons">
+          {% for name, link in page_links %}
+            <a href="{% url link %}">
+              {% if name|lower in current_page_name %}
+                  <lx-button lx-color="white" lx-type="raised" style="width:200px;">
+                    <div class="c-menu__link fs-headline display-block">
+                      {{ name }}
+                    </div>
+                  </lx-button>
+              {% else %}
+                  <lx-button lx-color="white" lx-type="flat" style="width:200px;">
+                    <div class="c-menu__link fs-headline display-block">
+                      {{ name }}
+                    </div>
+                  </lx-button>
+              {% endif %}
+            </a>
+          {% endfor %}
+        </div>
+        <span class="toolbar__label fs-title"><!--Current Page Title Could Go Here--></span>
+        <div class="toolbar__right profile-button">
+          <lx-search-filter lx-color="white" lx-closed="true" class="search">
+            <input type="text" ng-model="vm.searchFilter.sixth" placeholder="Search">
+          </lx-search-filter>
+          <lx-dropdown position="right" from-top>
+            {% if user.is_authenticated %}
+
+            <button class="btn" lx-ripple lx-dropdown-toggle >
+              <img src="{% gravatar_url user.email 200 %}" width="40" height="40" class="img-round ">
+            </button>
+              <lx-dropdown-menu>
+                <ul>
+                  <li>
+                    <a href="{% url 'profile' %}" class="fs-headline display-block dropdown-link dropdown-link--is-large">Profile</a>
+                  </li>
+                  <li>
+                    <a href="{% url 'setting' %}" class="fs-headline display-block dropdown-link dropdown-link--is-large">Settings</a>
+                  </li>
+                  <li>
+                    <a href="{% url 'logout' %}" class="fs-headline display-block dropdown-link dropdown-link--is-large">Logout</a>
+                  </li>
+                </ul>
+              </lx-dropdown-menu>
+              {% else %}
+              <button class="btn" lx-ripple lx-dropdown-toggle >
+                <i class="icon icon--l bgc-grey-400 icon--circled mdi mdi-account"></i>
+              </button>
+              <div ng-controller="loginData">
+                <lx-dropdown-menu>
+                  <ul>
+                    <li>
+                        <a  class="fs-body-1 display-block dropdown-link dropdown-link--is-large"
+                            ng-click="opendDialog('loginCall')">
+                           Login
+                        </a>
+                    </li>
+                    <li>
+                      <a href="{% url 'user_registration' %}" class="fs-headline display-block dropdown-link dropdown-link--is-large">Register</a>
+                    </li>
+                  </ul>
+                </lx-dropdown-menu>
+              {% login_popup %}
+              </div>
+              {% endif %}
+          </lx-dropdown>
+        </div>
+      </div>
+
+        <!-- Mobile sidenav -->
+        <md-sidenav
+            class="md-sidenav-left"
+            md-component-id="left"
+            md-whiteframe="4">
+          <md-content>
+            <!-- this is 80px because the site's header fucks up -->
+            <md-toolbar class="bgc-light-blue-800" style="height: 80px;">
+              <h1 class="md-toolbar-tools">Navigation</h1>
+            </md-toolbar>
+            <ul class="c-menu__items light-blue-800 p+">
+              <ul class="list mt++">
+                {% for name, link in page_links %}
+                <li class="list-row list-row--has-separator">
+                  <a href="{% url link %}" class="c-menu__link fs-headline display-block">
+                    <div class="list-row__content" align="right">
+                      {{ name }}
+                    </div>
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </ul>
+          </md-content>
+        </md-sidenav>
+    <canvas id="world" style="position: absolute; top: 0px; left: 0px; z-index: 0;">
+    </canvas>
+      <div id="o-wrapper" class="o-wrapper" style="margin: 30px; position: relative; z-index: 1;">
+        <div class="c-buttons">
+          <div id="content">
+              {% block content %}{% endblock %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="c-mask" class="c-mask"></div>
+  </body>
+</html>

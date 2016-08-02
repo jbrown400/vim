@@ -1,0 +1,8 @@
+from django.shortcuts import render
+
+from django.http import HttpResponse
+
+
+
+def noggy(request):
+    return HttpResponse("This is the \"nog\" page!")

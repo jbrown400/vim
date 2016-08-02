@@ -1,0 +1,55 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+bool checkInt();
+bool checkDecimal(); 
+bool checkScientific();
+bool checkHex();
+bool checkBinary();
+bool checkKeywords();
+bool checkIdentifiers();
+
+
+int main(){
+  int numTokens;
+
+  cin >> numToken;
+
+  for(int i = 1; i <= numTokens; i++){
+    string s;
+
+    cin >> s;
+
+    cout << i << ": ";
+
+    if(checkInt()){
+      cout << "Integer" << endl;
+    }
+    else if(checkDecimal()){
+      cout << "Decimnal" << endl;
+    }
+    else if(checkScientific()){
+      cout << "Scientific" << endl;
+    }
+    else if(checkHex()){
+      cout << "Hexadecimal" << endl;
+    }
+    else if(checkBinary()){
+      cout << "Binary" << endl;
+    }
+    else if(checkKeywords(){
+      cout << "Keyword" << endl;
+    }
+    else if(checkIdentifiers()){
+      cout << "Identifiier" << endl;
+    }
+    else{
+      cout << "Error. Invalid" << endl;
+    }
+  }
+  return 0;
+}
+

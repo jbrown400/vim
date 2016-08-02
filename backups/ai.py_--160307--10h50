@@ -1,0 +1,348 @@
+# This is where you build your AI for the Chess game.
+
+from joueur.base_ai import BaseAI
+from games.chess.piece import Piece
+from games.chess.piece_move import movePawn, moveRook, moveKnight, moveBishop,\
+        moveQueen, moveKing
+import random
+import copy
+class AI(BaseAI):
+    """ The basic AI functions that are the same between games. """
+
+    def get_name(self):
+        """ This is the name you send to the server so your AI will control the player named this string.
+
+        Returns
+            str: The name of your Player.
+        """
+
+        return "Chess Python Player" # REPLACE THIS WITH YOUR TEAM NAME
+
+
+
+    def start(self):
+        """ This is called once the game starts and your AI knows its playerID and game. You can initialize your AI here.
+        """
+        
+        # replace with your start logic
+
+
+
+    def game_updated(self):
+        """ This is called every time the game's state updates, so if you are tracking anything you can update it here.
+        """
+
+        # replace with your game updated logic
+
+
+
+
+    def end(self, won, reason):
+        """ This is called when the game ends, you can clean up your data and dump files here if need be.
+
+        Args:
+            won (bool): True means you won, False means you lost.
+            reason (str): The human readable string explaining why you won or lost.
+        """
+
+        # replace with your end logic
+
+
+
+    def run_turn(self):
+        """ This is called every time it is this AI.player's turn.
+
+        Returns:
+            bool: Represents if you want to end your turn. True means end your turn, False means to keep your turn going and re-call this function.
+        """
+        # 1) print the board to the console
+        for f in range(9, -2, -1): # iterate through the file in reverse order
+            output = ""
+            if f == 9 or f == 0: # then the top or bottom of the board
+                output = "   +------------------------+"
+            elif f == -1: # then show the ranks
+                output = "     a  b  c  d  e  f  g  h"
+            else: # board
+                output = " " + str(f) + " |"
+                # fill in all the ranks with pieces at the current rank
+                for rankOffset in range(0, 8):
+                    r = chr(ord("a") + rankOffset) # start at a, with with rank offset increasing the char
+                    currentPiece = None
+                    for piece in self.game.pieces:
+                        if piece.rank == f and piece.file == r: # then we found the piece at (rank, file)
+                            currentPiece = piece
+                            break
+
+                    code = "." # default "no piece"
+                    if currentPiece:
+                        code = currentPiece.type[0] # the code will be the first character of their type, e.g. 'Q' for "Queen"
+
+                        if currentPiece.type == "Knight": # 'K' is for "King", we use 'N' for "Knights"
+                            code = "N"
+
+                        if currentPiece.owner.id == "1": # the second player (black) is lower case. Otherwise it's upppercase already
+                            code = code.lower()
+
+                    output += " " + code + " "
+
+                output += "|"
+
+            print(output)
+
+        # 2) print the opponent's last move to the console
+        if len(self.game.moves) > 0:
+            print("Opponent's Last Move: '" + self.game.moves[-1].san + "'")
+
+        # 3) print how much time remaining this AI has to calculate moves
+        print("Time Remaining: " + str(self.player.time_remaining) + " ns")
+
+        my_pieces = self.player.pieces
+        op_pieces = self.player.other_player.pieces
+        king = AI.getKing(my_pieces)
+        # Generate every valid move (will exclude moves resulting in check)
+        possibleMoves = AI.generateMoves(my_pieces, op_pieces)
+        # for x in possibleMoves:
+        #     print(x[0].type, x[1], x[2])
+
+
+        # If in check'
+        if(self.player.in_check is True):
+            print("King is in check")
+            # Generate all moves opponent can make
+            # Using the same move generation function, just flipping the lists
+            # of pieces that are passed
+            opponentMoves = AI.generateMoves(op_pieces, my_pieces)
+            # Pick out king moves from possible moves
+            kingMoves = [x for x in possibleMoves if x[0].type == "King"]
+            # Because move generation already checks for check, we know that
+            # the moves listed here are only valid ones
+            # If the king can move out of check
+            if(kingMoves):
+                print("Moving king out of harms way ****")
+                my_move = random.choice(kingMoves)
+                AI.makeMove(my_move, possibleMoves)
+                
+            else:
+                # Identify piece putting king in check
+                for x in opponentMoves:
+                    print(x[0].type, x[1], x[2])
+                for x in opponentMoves:
+                    if(x[1] == king.file and x[2] == king.rank):
+                        attackingPiece = x[0]
+                # See if any pieces can attack the opponents attacking piece
+                canAttack = False
+                myAttackMove = []
+                for y in possibleMoves:
+                    if(y[1] == attackingPiece.file and y[2] == attackingPiece.rank):
+                        # One of my pieces can attack the other piece
+                        myAttackMove = y
+                        canAttack = True
+                # Make the move to attack
+                if(canAttack):
+                    print("Attacking the other piece *****")
+                    AI.makeMove(myAttackMove, possibleMoves)
+                else:
+                    # To try and block the piece, have to figure out from which
+                    # direction the king is being attacked.
+                    blockMoves = AI.findAttackDirection(king, attackingPiece)
+                    # Now that the direction has been found, try to move a piece
+                    # between the attacker and the king
+                    for z in possibleMoves:
+                        # If the files match up
+                        if(z[1] == any(x[0] for x in blockMoves)):
+                            # If the ranks match up
+                            if(z[2] == any(x[1] for x in blockMoves)):
+                                # Make the move
+                                AI.makeMove(z, possibleMoves)
+                
+        # else not in check
+        else:
+            my_move = random.choice(possibleMoves)
+            AI.makeMove(my_move, possibleMoves)
+
+        return True  # to signify we are done with our turn.
+
+        '''Later, take the other_player.peices check and put it into a list I 
+            pass each turn so I don't have to keep checking that and it'll clean 
+            up the code '''
+
+
+
+
+    # Pre: None
+    # Post: Returns every possible move your player can make (that will not
+    #       result in your king being put into check
+    def generateMoves(_my_pieces, _op_pieces):
+        king = AI.getKing(_my_pieces)
+        moves = []
+
+        # For each piece, generate all possible moves it can make
+        for p in _my_pieces:
+            tmp_move = []
+            if(p.type == "Pawn"):
+                tmp_move.extend(movePawn(p, _my_pieces, _op_pieces))
+            elif(p.type == "Rook"):
+                tmp_move.extend(moveRook(p, _my_pieces, _op_pieces))
+            elif(p.type == "Knight"):
+                tmp_move.extend(moveKnight(p, _my_pieces, _op_pieces))
+            elif(p.type == "Bishop"):
+                tmp_move.extend(moveBishop(p, _my_pieces, _op_pieces))
+            elif(p.type == "King"):
+                tmp_move.extend(moveKing(p, _my_pieces, _op_pieces))
+            elif(p.type == "Queen"):
+                tmp_move.extend(moveQueen(p, _my_pieces, _op_pieces))
+            # For each possible move, see if it would result in check
+            for x in tmp_move:
+                # Copy my current list of pieces as to not alter the original
+                # tmp_list = AI.copy_pieces(_my_pieces)
+                tmp_list = copy.deepcopy(_my_pieces)
+
+                # Extending the plyer's own pieces will allow it to incorporate
+                # the moves a piece could take if another piece of its own 
+                # color is taken (i. e. a knight taking a bishop that just took
+                # a pawn of the knights color)
+                # tmp_list.extend(AI.copy_pieces(_op_pieces))
+                tmp_list.extend(copy.deepcopy(_op_pieces))
+
+                # Pick out the peice from my tmp list of pieces and alter
+                # the rank and file so the test for check can be done
+                for y in tmp_list:
+                    if(y.id == x[0].id):
+                        y.setFile(x[1])
+                        y.setRank(x[2])
+                # Now generate all possible moves opponent could make based on
+                # this modified list of pieces
+                # Pass _op_pieces first because you want to generate the moves from the
+                # opponents perspective
+                other_moves = []
+                for o in _op_pieces:
+                    if(o.type == "Pawn"):
+                        # Check for Pawn attacks
+                        if(o.owner.color == "Black"):
+                            v = -1
+                        elif(o.owner.color == "White"):
+                            v = 1
+                        # Check attack
+                        if(any((chr(ord(o.file) + 1) + str(o.rank + v)) == (x.file + str(x.rank)) for x in tmp_list)):
+                            other_moves.extend([[o, chr(ord(o.file) + 1), o.rank + v]])
+                        if(any((chr(ord(o.file) - 1) + str(o.rank + v)) == (x.file + str(x.rank)) for x in tmp_list)):
+                            other_moves.extend([[o, chr(ord(o.file) - 1), o.rank + v]])
+                        # Pass it a list of only itself to create any possible
+                        # move (including avenging its own pieces)
+                        other_moves.extend(movePawn(o, [o], tmp_list))
+                    elif(o.type == "Rook"):
+                        other_moves.extend(moveRook(o, [o], tmp_list))
+                    elif(o.type == "Knight"):
+                        other_moves.extend(moveKnight(o, [o], tmp_list))
+                    elif(o.type == "Bishop"):
+                        other_moves.extend(moveBishop(o, [o], tmp_list))
+                    elif(o.type == "King"):
+                        other_moves.extend(moveKing(o, [o], tmp_list))
+                    elif(o.type == "Queen"):
+                        other_moves.extend(moveQueen(o, [o], tmp_list))
+                # See if any opponent moves attack the king
+                if(p.type == "King"):
+                    if(not(any((y[1] == x[1] and y[2] == x[2]) for y in other_moves))):
+                        moves.append(x)
+                else:
+                    if(not(any((y[1] == king.file and y[2] == king.rank) for y in other_moves))):
+                        moves.append(x)
+                del tmp_list
+        return moves
+
+
+    # Pre: A move must be possible
+    # Post: Makes a move
+    def makeMove(_my_move, _possibleMoves):
+        the_piece = _my_move[0]
+        # Print the output in the desired format
+        print(the_piece.type, "at", the_piece.file, the_piece.rank)
+        # Print out all possible moves for the chosen piece
+        for x in _possibleMoves:
+            if(the_piece.id == x[0].id):
+                print(x[0].id, x[1], x[2])
+        # Print the chosen move
+        print("The move: ", _my_move[1], _my_move[2])
+        the_piece.move(_my_move[1], _my_move[2], "Queen")
+        
+    # Pre: There is a piece trying to attack the king and I can only block it
+    # Post: Returns a range in which I should move a piece to block the check
+    def findAttackDirection(king, attacker):
+        # Using the rank and file as coordinates, you can determine which 
+        # direction the king is being attacked from
+        block_spaces = []
+
+        if(king.rank < attacker.rank and king.file == attacker.file):
+            # Attacked from "above"
+            for x in range(king.rank, attacker.rank):
+                block_spaces.append([king.file, x])
+            return block_spaces
+
+        elif(king.rank < attacker.rank and king.file < attacker.file):
+            # This updates both the rank and file. Because, on a square board,
+            # the x and y distances will be equal, we can change the files based
+            # on how far we are along in the range between the ranks
+            # Attacked from above and right
+            for x in range(king.rank, attacker.rank):
+                block_spaces.append([chr(ord(king.file) + abs(king.rank - x)), x])
+            return block_spaces
+
+        elif(king.rank == attacker.rank and king.file < attacker.file):
+            # Attacked from right
+            for x in range(ord(king.file), ord(attacker.file)):
+                block_spaces.append([chr(x), king.rank])
+            return block_spaces
+
+        elif(king.rank > attacker.rank and king.file < attacker.file):
+            # Attacked from below and right
+            for x in range(attacker.rank, king.rank):
+                block_spaces.append([chr(ord(king.file) - abs(king.rank - x)), x])
+            return block_spaces
+
+        elif(king.rank > attacker.rank and king.file == attacker.file):
+            # Attacked from below
+            for x in range(attacker.rank, king.rank):
+                block_spaces.append([king.file, x])
+            return block_spaces
+
+        elif(king.rank > attacker.rank and king.file > attacker.file):
+            # Attacked from below and left
+            for x in range(king.rank, attacker.rank):
+                block_spaces.append([chr(ord(king.file) - abs(king.rank - x)), x])
+            return block_spaces
+
+        elif(king.rank == attacker.rank and king.file > attacker.file):
+            # Attacked from left
+            for x in range(ord(attacker.file), ord(king.file)):
+                block_spaces.append([chr(x), king.rank])
+            return block_spaces
+
+        elif(king.rank < attacker.rank and king.file < attacker.file):
+            # Attacked from above and left
+            for x in range(king.rank, attacker.rank):
+                block_spaces.append([chr(ord(king.file) - abs(king.rank - x)), x])
+            return block_spaces
+
+    # Pre: None
+    # Post: Returns the player's or opponents King, depending on what is passed
+    def getKing(list_of_pieces):
+        # _list_of_pieces will either be your own pieces or your opponents 
+        # pieces
+        for x in list_of_pieces:
+            if(x.type == "King"):
+                return x
+
+        return False
+
+    def copy_pieces(list_of_pieces):
+        new_list = []
+        for x in list_of_pieces:
+            tmp = Piece()
+            tmp.setRank(x.rank)
+            tmp.setFile(x.file)
+            tmp.setType(x.type)
+            tmp.setOwner(x.owner)
+            tmp.setCaptured(x.captured)
+            tmp.setHasMoved(x.has_moved)
+            new_list.append(tmp)
+        return new_list

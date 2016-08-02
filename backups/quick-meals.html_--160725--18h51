@@ -1,0 +1,28 @@
+<ion-view title="Quick Meals">
+    <ion-content>
+        <a href="#/app/quickmeals/hotnready" style="text-decoration:none">
+            <div class="card">
+                    <h2>Hot N' Ready</h2>
+                <div class="item item-image">
+                    <img src="img/hotnready.jpg" style="height:175px">
+                </div>
+                <div class="item">
+                    <div style="text-align:center">Meals ready when you are!</div>
+                </div>
+            </div>
+        </a>
+        <a href="#/app/quickmeals/ovenready" style="text-decoration:none">
+            <div class="card">
+                <div class="title">
+                    <h2>Oven Ready</h2>
+                </div>
+                <div class="item item-image">
+                    <img src="img/ovenready.jpg" style="height:175px">
+                </div>
+                <div class="item">
+                    <div style="text-align:center">Just pop in your oven!</div>
+                </div>
+            </div>
+        </a>
+    </ion-content>
+</ion-view>

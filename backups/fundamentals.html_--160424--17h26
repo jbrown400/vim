@@ -1,0 +1,4 @@
+<h2> This page will showcase fundamentals (probably nothing but algorithms and
+    machine learning math stuff) </h2>
+
+<a href="{% url 'showcase:home' %}">Home</a>

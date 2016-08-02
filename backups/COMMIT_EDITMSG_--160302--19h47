@@ -1,0 +1,16 @@
+Merge remote-tracking branch 'origin/fb-sass' into fb-userexperience
+
+# Conflicts:
+#	browse/templates/browse/index.html
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch fb-userexperience
+# All conflicts fixed but you are still merging.
+#

@@ -1,0 +1,159 @@
+#Justin Brown 
+#A.I. Puzzle 1 (Spring 2016)
+#Color Connect
+'''This program will take in a file containing an integer defining the size, an integer defining the 
+	number of colors, and a map. The goal of the program is to "connect" each color on the map.
+	The program will then create a data structure to house the necessary data and run the 
+	Breadth-First-Search algorithm (which will utilize the data structure) on the map. The result will be 
+	a new map with each color connected.'''
+
+'''Imports'''
+import sys                  #Used for passing arguements
+import time                 #Used for keeping track of time
+from copy import deepcopy   #Used for copying Nodes
+
+'''Classes'''
+class Node(object):
+	def __init__(self, current_state, parent_node, start, end, actions, depth):
+		self.current_state = current_state
+		self.parent_node = parent_node
+		self.start = start
+		self.end = end
+		self.actions = actions
+		self.depth = depth + 1
+
+	#Pre: None
+	#Post: Adds updated start coordinates for a new Node
+	def add_start(self, c, x, y):
+		self.start[c] = [x, y]
+	#Pre: None
+	#Post: Adds ending coordinates for a Node
+	def add_end(self, c, x, y):
+		self.end[c] = [x, y]
+	
+
+'''Main Body'''
+f = open(sys.argv[1], "r")                     #Open stream for reading
+ti = time.clock()                              #Start timer
+constraints = f.readline()                     #Read in map details
+size = int(constraints[0])                     #NOTE: I realize getting the colors like this won't work.
+number_of_colors = int(constraints[2])         #I will create a dynamic solution on the next puzzle
+carte = [[None for c in range(size)] for c in range(size)] #Create an empty map ('carte' is French for map)
+
+
+root = Node(None, None, {}, {}, [], 1)         #Create an empty "Root" node
+
+#Read in map and set starting and ending points (tmp[col*2] allows for skipping the spaces.)
+for row in range(size):
+	tmp = f.readline()
+	for col in range(size):
+		if(tmp[col*2] != ' '):
+			carte[row][col] = tmp[col*2]
+			if((tmp[col*2] != 'e') and not(tmp[col*2] in root.start.keys())):
+				root.add_start(tmp[col*2], row, col)
+			elif((tmp[col*2] != 'e') and (tmp[col*2] in root.start.keys())):
+				root.end[tmp[col*2]] = [row, col, "False"]
+
+root.current_state = carte                     #Set carte (initial starting point) in root
+my_list = []
+my_list.append(root)                           #Add root to list
+
+parent = 0
+while parent < len(my_list):
+	for color in root.start:
+		x = my_list[parent].start[color][0]
+		y = my_list[parent].start[color][1]
+		#if any action will touch an end point, break so that color is done and append action
+		#else check to see if it's a valid move, create new Node, set new update Node attributes
+		if (x + 1) == my_list[parent].end[color][0] and y == my_list[parent].end[color][1]:
+			my_list[parent].end[color][2] = "True"
+			if not any(i == [color, y, x + 1] for i in my_list[parent].actions):
+				my_list[parent].actions.append([color, y, x + 1])
+			if not "False" in [x for v in my_list[parent].end.values() for x in v]:
+				Final = my_list[parent]
+				break
+		#Down
+		elif (x + 1 in range(size)) and not (my_list[parent].current_state[x + 1][y] in root.start):
+			my_list.append(deepcopy(Node(my_list[parent].current_state, my_list[parent], my_list[parent].start, my_list[parent].end, my_list[parent].actions, my_list[parent].depth)))
+			my_list[-1].current_state[x + 1][y] = color
+			my_list[-1].start[color] = [x + 1, y]
+			my_list[-1].actions.append([color, y, x + 1])
+
+		#if any action will touch an end point, break so that color is done and append action
+		#else check to see if it's a valid move, create new Node, set new update Node attributes
+		if (x - 1) == my_list[parent].end[color][0] and y == my_list[parent].end[color][1]:
+			my_list[parent].end[color][2] = "True"
+			if not any(i == [color, y, x - 1] for i in my_list[parent].actions):
+				my_list[parent].actions.append([color, y, x - 1])
+			if not "False" in [x for v in my_list[parent].end.values() for x in v]:
+				Final = my_list[parent]
+				break
+		#Up
+		elif (x - 1 in range(size)) and not (my_list[parent].current_state[x - 1][y] in root.start):
+			my_list.append(deepcopy(Node(my_list[parent].current_state, my_list[parent], my_list[parent].start, my_list[parent].end, my_list[parent].actions, my_list[parent].depth)))
+			my_list[-1].current_state[x - 1][y] = color
+			my_list[-1].start[color] = [x - 1, y]
+			my_list[-1].actions.append([color, y, x - 1])
+
+		#if any action will touch an end point, break so that color is done and append action
+		#else check to see if it's a valid move, create new Node, set new update Node attributes
+		if (y + 1) == my_list[parent].end[color][1] and x == my_list[parent].end[color][0]:
+			my_list[parent].end[color][2] = "True"
+			if not any(i == [color, y + 1, x] for i in my_list[parent].actions):
+				my_list[parent].actions.append([color, y + 1, x])
+			if not "False" in [x for v in my_list[parent].end.values() for x in v]:
+				Final = my_list[parent]
+				break
+		#Right
+		elif (y + 1 in range(size)) and not (my_list[parent].current_state[x][y + 1] in root.start):
+			my_list.append(deepcopy(Node(my_list[parent].current_state, my_list[parent], my_list[parent].start, my_list[parent].end, my_list[parent].actions, my_list[parent].depth)))
+			my_list[-1].current_state[x][y + 1] = color
+			my_list[-1].start[color] = [x, y + 1]
+			my_list[-1].actions.append([color, y + 1, x])
+
+		#if any action will touch an end point, break so that color is done and append action
+		#else check to see if it's a valid move, create new Node, set new update Node attributes
+		if (y - 1) == my_list[parent].end[color][1] and x == my_list[parent].end[color][0]:
+			my_list[parent].end[color][2] = "True"
+			if not any(i == [color, y - 1, x] for i in my_list[parent].actions):
+				my_list[parent].actions.append([color, y - 1, x])
+			if not "False" in [x for v in my_list[parent].end.values() for x in v]:
+				Final = my_list[parent]
+				break
+		#Left
+		elif (y - 1 in range(size)) and not (my_list[parent].current_state[x][y - 1] in root.start):
+			my_list.append(deepcopy(Node(my_list[parent].current_state, my_list[parent], my_list[parent].start, my_list[parent].end, my_list[parent].actions, my_list[parent].depth)))
+			my_list[-1].current_state[x][y - 1] = color
+			my_list[-1].start[color] = [x, y - 1]
+			my_list[-1].actions.append([color, y - 1, x])
+
+	#If there is no longer "False" in the end values, that means every color has been reached and it can break
+	if not "False" in [x for v in my_list[parent].end.values() for x in v]:
+		break
+	parent += 1
+tf = time.clock()                     #Stop time
+
+total_time = int((tf - ti) * 1000000)  #Converts to milliseconds and cuts off decimal
+
+#WRITE ALL THE THINGS!!!
+with open("output.txt", "a") as g:
+	g.write(str(total_time) + '\n')
+	print(total_time)
+	g.write(str(Final.depth) + '\n')
+	print(Final.depth)
+	for item in Final.actions:
+		print(item[0] + ' ' + ' '.join(map(str, item[1:])) + ', ', end='')
+		g.write(item[0] + ' ' + ' '.join(map(str, item[1:])) + ', ')
+
+		
+	for row in range(size):
+		print()
+		g.write('\n')
+		for col in range(size):
+			print(Final.current_state[row][col] + ' ', end='')
+			g.write(Final.current_state[row][col] + ' ')
+	print() #For spacing
+
+#Close streams because it's the Jedi way. 
+f.close()
+g.close()

@@ -1,0 +1,105 @@
+# This file houses the Iterative-Deepening Depth Limited Minimax function and
+# the "sub-functions" min-value and max-value
+# The heuristic will be "typical" point value for pieces while also accounting
+# for draws and wins
+# import copy
+from games.chess.generation import generateMoves, copy_pieces
+
+# Pre: None
+# Post: Returns a move list [piece, new rank, new file]
+def miniMax(self, my_pieces, op_pieces):
+    # for x in possibleMoves:
+        # print(x[0].type, x[1], x[2])
+    # print("miniMax was called")
+    max_level = 3
+    value = -1
+    return_move = []
+    # For loop for iterative deepening
+    for x in range(0, max_level):
+        print("Checking to depth: ", x)
+        tmp = max_value(x, self, my_pieces, op_pieces)
+        if(tmp[0] > value):
+            value = tmp[0]
+            return_move = tmp[1]
+    # print("The value is: ", value)
+    # print("THe move is: ", return_move)
+    return return_move
+
+# Pre: None
+# Post: Returns a utility value (integer)
+# The opponent (Will be from the perspective of the opponent)
+def min_value(_level, self, _my_pieces, _op_pieces):
+    # print(_level)
+    # Generate possible moves for pieces passed in
+    moves = generateMoves(self, _my_pieces, _op_pieces)
+    # Variable to keep track of highest value
+    highest_value = 0
+    return_move = []
+    # Loop through moves
+    for move in moves:
+        # Bottom of iteration
+        if(_level == 0):
+            # If the value of making that move is the highest so far
+            if(move[4] >= highest_value):
+                highest_value = move[4]
+                return_move = move
+        else:
+            # Create copy of pieces that simulates the move
+            # tmp_list = copy.deepcopy(_my_pieces)
+            tmp_list = copy_pieces(_my_pieces)
+            # Modify list
+            for y in tmp_list:
+                # Match the piece
+                if(move[0].id == y.id):
+                    y.setRank(move[2])
+                    y.setFile(move[1])
+                    break
+            # Call Min to get the value based on the modified list of pieces
+            # Flip _op_pieces and _my_pieces to get the point of view of the opponent
+            # print("About to call MAX")
+            tmp_value = max_value(_level - 1, self, _op_pieces, _my_pieces)[0]
+            if(tmp_value >= highest_value):
+                highest_value = tmp_value
+                return_move = move
+
+    # print(return_move)
+    return highest_value, return_move
+# Pre: None
+# Post: Returns a utility value (integer)
+# My player
+def max_value(_level, self, _my_pieces, _op_pieces):
+    # print(_level)
+    # Generate possible moves for pieces passed in
+    moves = generateMoves(self, _my_pieces, _op_pieces)
+    # Variable to keep track of highest value
+    highest_value = 0
+    return_move = []
+    # Loop through moves
+    for move in moves:
+        # Bottom of iteration
+        if(_level == 0):
+            # If the value of making that move is the highest so far
+            if(move[4] >= highest_value):
+                highest_value = move[4]
+                return_move = move
+        else:
+            # Create copy of pieces that simulates the move
+            # tmp_list = copy.deepcopy(_my_pieces)
+            tmp_list = copy_pieces(_my_pieces)
+            # Modify list
+            for y in tmp_list:
+                # Match the piece
+                if(move[0].id == y.id):
+                    y.setRank(move[2])
+                    y.setFile(move[1])
+                    break
+            # Call Min to get the value based on the modified list of pieces
+            # Flip _op_pieces and _my_pieces to get the point of view of the opponent
+            # print("About to call MIN")
+            tmp_value = min_value(_level - 1, self, _op_pieces, _my_pieces)[0]
+            if(tmp_value >= highest_value):
+                highest_value = tmp_value
+                return_move = move
+    # print(return_move)
+    return highest_value, return_move
+

@@ -1,0 +1,86 @@
+#Justin Brown
+#Artificial Intelligence (Sp 2016)
+#Phase 3
+#Greedy Best-First Search
+
+
+import sys
+import time
+
+
+class Node(object):
+    def __init__(self, current_state, start, end, actions):
+        self.current_state = current_state
+        self.start = start
+        self.end = end
+        self.action = actions
+
+    #Pre: None
+    #Post: Adds updated start coordinates for a new Node
+    def add_start(self, c, x, y):
+        self.start[c] = [x, y]
+    #Pre: None
+    #Post: Adds ending coordinates for a Node
+    def add_end(self, c, x, y, f):
+        self.end[c] = [x, y, f]
+    #Pre: None
+    #Post: returns a copy of the passed Node
+    def copy(other):
+        start = {}
+        end = {}
+        for x in other.start:
+            start[x] = other.start[x][:]
+        for x in other.end:
+            start[x] = other.start[x][:]
+
+        return Node([x[:] for x in other.current_state], start, end, [x[:] for x in other.actions])
+
+def output(node):
+    pass
+
+
+#Greedy Best-First Search
+def gbfs(node):
+    goal_found = False
+    while not goal_found:
+        for color in sorted(node.start):
+            x = node.start[color][0]            #Sets x coordinate of current color
+            y = node.start[color][1]            #Sets y coordinate of current color
+            #check if goal state
+            if x == node.end[color][0] and y == node.end[color][1]:
+                node.end[color][2] = "True"
+                if not "False" in [x for v in node.end.values() for x in v]:
+                    output(node)
+                    return True
+                continue
+            #New stuff!
+    #Here I am going to have to calculate the distance to its colors goal state
+    #for each color:
+        #do a distance calculation for each move. Choose the move that will get closest to the goal (i.e. the lowest distance)
+
+
+
+
+'''Main Body'''
+f = open(sys.argv[1], "r")
+ti = time.clock()
+
+
+contraints = [int(s) for s in f.readline().split() if s.isdigit()]
+size = contraints[0]
+number_of_colors = contraints[1]
+carte = [[None for x in range(size)] for c in range(size)]  #carte is French for map
+
+root = Node(carte, {}, {}, [])
+
+#Read in map and set carte, starting points and ending points
+for row in range(size):
+	l = f.readline()
+    for col in range(size):
+        if(l[2*col] != ' '):
+            carte[row][col] = l[2*col]
+            if((l[2*col] != 'e') and not (l[2*col] in root.start.keys())):
+                root.add_start(l[2*col], row, col)
+            elif((l[2*col] != 'e') and (l[2*col] in root.start.keys())):
+                root.add_end(l[2*col], row, col, "False")
+

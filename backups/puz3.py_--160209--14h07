@@ -1,0 +1,147 @@
+# Justin Brown
+# Artificial Intelligence (Sp 2016)
+# Phase 3
+# Greedy Best-First Search
+
+
+import sys
+import time
+
+
+class Node(object):
+    def __init__(self, current_state, start, end, actions):
+        self.current_state = current_state
+        self.start = start
+        self.end = end
+        self.actions = actions
+
+    # Pre: None
+    # Post: Adds updated start coordinates for a new Node
+    def add_start(self, c, x, y):
+        self.start[c] = [x, y]
+    # Pre: None
+    # Post: Adds ending coordinates for a Node
+    def add_end(self, c, x, y, f):
+        self.end[c] = [x, y, f]
+    # Pre: None
+    # Post: returns a copy of the passed Node
+    def copy(other):
+        start = {}
+        end = {}
+        for x in other.start:
+            start[x] = other.start[x][:]
+        for x in other.end:
+            start[x] = other.start[x][:]
+
+        return Node([x[:] for x in other.current_state], start, end, [x[:] for x in other.actions])
+
+def output(node):
+    pass
+
+
+# Greedy Best-First Search
+def gbfs(node):
+    # goal_found = False
+    # while not goal_found:
+    for color in sorted(node.start):
+        x = node.start[color][0]            # Sets x coordinate of current color
+        y = node.start[color][1]            # Sets y coordinate of current color
+        # check if goal state
+        if x == node.end[color][0] and y == node.end[color][1]:
+            node.end[color][2] = "True"
+            if not "False" in [x for v in node.end.values() for x in v]:
+                output(node)
+                return True
+            continue
+        else:
+            s = len(node.current_state[0]) ** 2
+            distances = {"Down": s, "Up": s, "Right": s, "Left": s}     # Set all to none so if a move isn't available, the indicies won't change
+            # Down
+            if (x + 1) in range(size) and (node.current_state[x + 1][y] == color or node.current_state[x + 1][y] == 'e'):
+                distances["Down"] = abs(node.end[color][0] - (node.start[color][0] + 1)) + \
+                        abs(node.end[color][1] - node.start[color][1])
+                print("Down", distances["Down"])
+            # Up
+            if (x - 1) in range(size) and (node.current_state[x - 1][y] == color or node.current_state[x - 1][y] == 'e'):
+                distances["Up"] = abs(node.end[color][0] - (node.start[color][0] - 1)) + \
+                        abs(node.end[color][1] - node.start[color][1])
+                print("Up", distances["Up"])
+            # Right
+            if (y + 1) in range(size) and (node.current_state[x][y + 1] == color or node.current_state[x][y + 1] == 'e'):
+                distances["Right"] = abs(node.end[color][0] - node.start[color][0]) + \
+                        abs(node.end[color][1] - (node.start[color][1] + 1))
+                print("Right", distances["Right"])
+
+            # Left
+            if (y - 1) in range(size) and (node.current_state[x][y - 1] == color or node.current_state[x][y - 1] == 'e'):
+                distances["Left"] = abs(node.end[color][0] - node.start[color][0]) + \
+                        abs(node.end[color][1] - (node.start[color][1] - 1))
+                print("Left", distances["Left"])
+            
+            move_choice = min(distances, key=distances.get)
+
+            if(move_choice == "Down"):
+                tmp = Node.copy(node)
+                tmp.start[color][0] += 1
+                tmp.current_state[x][y] = color
+                tmp.actions.append([color, y, x + 1])
+                if(gbfs(tmp)):
+                    return True
+            elif(move_choice == "Up"):
+                tmp = Node.copy(node)
+                tmp.start[color][0] -= 1
+                tmp.current_state[x][y] = color
+                tmp.actions.append([color, y, x - 1])
+                if(gbfs(tmp)):
+                    return True
+            elif(move_choice == "Right"):
+                tmp = Node.copy(node)
+                tmp.start[color][1] += 1
+                tmp.current_state[x][y] = color
+                tmp.actions.append([color, y + 1, x])
+                if(gbfs(tmp)):
+                    return True
+            elif(move_choice == "Left"):
+                tmp = Node.copy(node)
+                tmp.start[color][1] -= 1
+                tmp.current_state[x][y] = color
+                tmp.actions.append([color, y - 1, x])
+                if(gbfs(tmp)):
+                    return True
+
+            # Find the index with the closest distance
+            # Switch case based on which index (Down, Up, Right, Left) and make moves
+
+
+
+
+
+
+'''Main Body'''
+f = open(sys.argv[1], "r")
+ti = time.clock()
+
+
+contraints = [int(s) for s in f.readline().split() if s.isdigit()]
+size = contraints[0]
+number_of_colors = contraints[1]
+carte = [[None for x in range(size)] for c in range(size)]  #carte is French for map
+
+root = Node(carte, {}, {}, [])
+
+# Read in map and set carte, starting points and ending points
+for row in range(size):
+    l = f.readline()
+    for col in range(size):
+        if(l[2*col] != ' '):
+            carte[row][col] = l[2*col]
+            if((l[2*col] != 'e') and not (l[2*col] in root.start.keys())):
+                root.add_start(l[2*col], row, col)
+            elif((l[2*col] != 'e') and (l[2*col] in root.start.keys())):
+                root.add_end(l[2*col], row, col, "False")
+
+
+
+
+gbfs(root)
+f.close()

@@ -1,0 +1,33 @@
+{% extends 'browse/base.html' %}
+{% load staticfiles %}
+{% load sass_tags %}
+{% load cards %}
+
+{% block title %}Home{% endblock %}
+{% block header %} 
+  <!--<link href="{% sass_src "browse/scss/reviews.scss" %}" rel="stylesheet"
+      type="text/css" />-->
+{% endblock %}
+
+{% block content %}
+  <br />
+  <br />
+  <div ng-app="lumxWrap">
+    {% if review_votes|length > 0 %}
+      <div class=latest-block">
+        <h2 style="text-align: left;">
+          Latest {{review_votes|length}} Review(s)
+        </h2>
+      </div>
+      {% for review, vote in review_votes %}
+        {% review_card review vote %}
+        {% comment %}
+          <div class="divider divider--dark" ></div>
+          </div>
+        {% endcomment %}
+      {% endfor %}
+    {% else %}
+      <h2>There are no reviews</h2>
+    {% endif %}
+  </div>
+{% endblock %}

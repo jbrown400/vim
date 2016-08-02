@@ -1,0 +1,79 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'page/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'page/bower_components/animated-climacons/css/animated-climacons.min.css' %}">
+        <script src="{% static 'page/script.js' %}"></script>
+    </head>
+    <body>
+        <div id="top">
+            top
+            <!--
+            <div id="quote">
+                This is the quote section
+            </div>
+            <div id="clock">
+
+            </div>
+            <div id=calendar">
+                Wed. May 4th 2016
+            </div>
+            -->
+        </div>
+        <div id="middle">
+            Middle
+        </div>
+        <div id="bottom">
+            <div class="weather-box">
+                <img src="{% static 'page/bower_components/animated-climacons/climacons/svg-css/cloudDrizzle.svg' %}"
+                    alt="" title="CloudDrizzle" class="weather-images">
+                <div class="temp">
+                    H&deg / L&deg
+                </div>
+                <div class="precip-wind">
+                    30%  |  15mph
+                </div>
+            </div>
+            <div class="weather-box">
+                <img src="{% static 'page/bower_components/animated-climacons/climacons/svg-css/sunFill.svg' %}"
+                    alt="" title="CloudDrizzle" class="weather-images">
+                <div class="temp">
+                    H&deg / L&deg
+                </div>
+                <div class="precip-wind">
+                    30%  |  15mph
+                </div>
+            </div>
+            <div class="weather-box">
+                <img src="{% static 'page/bower_components/animated-climacons/climacons/svg-css/cloudFog.svg' %}"
+                    alt="" title="CloudDrizzle" class="weather-images">
+                <div class="temp">
+                    H&deg / L&deg
+                </div>
+                <div class="precip-wind">
+                    30%  |  15mph
+                </div>
+            </div>
+            <div class="weather-box">
+                <img src="{% static 'page/bower_components/animated-climacons/climacons/svg-css/cloudLightningMoon.svg' %}"
+                    alt="" title="CloudDrizzle" class="weather-images">
+                <div class="temp">
+                    H&deg / L&deg
+                </div>
+                <div class="precip-wind">
+                    30%  |  15mph
+                </div>
+            </div>
+            <div class="weather-box">
+                <img src="{% static 'page/bower_components/animated-climacons/climacons/svg-css/cloudFog.svg' %}"
+                    alt="" title="CloudDrizzle" class="weather-images">
+                <div class="temp">
+                    H&deg / L&deg
+                </div>
+                <div class="precip-wind">
+                    30%  |  15mph
+                </div>
+            </div>
+        </div>
+    </body>
+</head>

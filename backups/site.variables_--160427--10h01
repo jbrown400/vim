@@ -1,0 +1,6 @@
+/*******************************
+     User Global Variables
+*******************************/
+@site : 'github';
+
+@button : 'github';

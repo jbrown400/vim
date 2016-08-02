@@ -1,0 +1,35 @@
+from django.db import models
+from multiselectfield import MultiSelectField
+
+
+class Project(models.Model):
+
+    project_id = models.IntegerField(default=0)
+    title = models.CharField(max_length=200)
+    description = models.TextField(max_length=None, default='Project Description')
+    git_url = models.URLField(max_length=200, default='GIT URL')
+    completed = models.BooleanField(default=False)
+    completion_date = models.DateTimeField('completion date', blank=True, null=True)
+
+    LANGUAGE_CHOICES = (
+            ('Python', "Python"),
+            ('Ruby', "Ruby"),
+            ('C++', "C++"),
+    )
+    languages = MultiSelectField(choices=LANGUAGE_CHOICES)
+
+    FRAMEWORK_CHOICES = (
+            ('Django', "Django"),
+            ('Rails', "Rails"),
+    )
+    frameworks = MultiSelectField(choices=FRAMEWORK_CHOICES, default="Framework", blank=True)
+
+    CATEGORY_CHOICES = (
+            ('A. I.', "Artificial Intelligence"),
+            ('Home Porject', "Home Project"),
+            ('Web Dev', "Web Dev"),
+    )
+    category = MultiSelectField(choices=CATEGORY_CHOICES)
+
+    def __str__(self):
+        return self.title

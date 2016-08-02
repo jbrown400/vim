@@ -1,0 +1,135 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+bool checkInt(const string _s);
+bool checkDecimal(const string _s); 
+bool checkScientific(const string _s);
+bool checkHex(const string _s);
+bool checkBinary(const string _s);
+bool checkKeywords(const string _s);
+bool checkIdentifiers(const string _s);
+
+
+int main(){
+    int numTokens;
+
+    cin >> numTokens;
+
+    for(int i = 1; i <= numTokens; i++){
+        string s;
+
+        cin >> s;
+
+        cout << i << ": ";
+
+        if(checkInt()){
+            cout << "Integer" << endl;
+        }
+        else if(checkDecimal()){
+            cout << "Decimnal" << endl;
+        }
+        else if(checkScientific()){
+            cout << "Scientific" << endl;
+        }
+        else if(checkHex()){
+            cout << "Hexadecimal" << endl;
+        }
+        else if(checkBinary()){
+            cout << "Binary" << endl;
+        }
+        else if(checkKeywords()){
+            cout << "Keyword" << endl;
+        }
+        else if(checkIdentifiers()){
+            cout << "Identifiier" << endl;
+        }
+        else{
+            cout << "Error. Invalid" << endl;
+        }
+    }
+  return 0;
+}
+
+bool checkInt(const string _s){
+    const unsigned int SUCCESS_STATE = 3;
+    const unsigned int FAILURE_STATE = 5;
+    int state = 1;
+    unsigned int i = 0;
+
+    while(i < _s.length()){
+        switch(state){
+            case 1:
+                if( '0' <= _s[i] && '9' >= _s[i] ){
+                    state = SUCCESS_STATE;
+                }
+                else if('-' == _s[i] || '+' == _s[i] ){
+                    state = 2;
+                }
+                else{
+                    state = FAILURE_STATE;
+                }
+                break;
+            case 2:
+            case 3:
+                if( '0' <= _s[i] && '9' >= _s[i] ){
+                    state = SUCCESS_STATE;
+                }
+                else{
+                    state = FAILURE_STATE;
+                }
+                break;
+            default:
+                i = _s.length();
+                break;
+        }
+        i++;
+    }
+
+    if( i == _s.length() && state == SUCCESS_STATE ){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+
+
+bool checkDecimal(const string _s){
+
+    return true;
+}
+
+bool checkScientific(const string _s){
+
+    return true;
+}
+
+bool checkHex(const string _s){
+
+    return true;
+}
+
+bool checkBinary(const string _s){
+
+    return true;
+}
+
+bool checkKeywords(const string _s){
+
+    return true;
+}
+
+bool checkIdentifiers(const string _s){
+
+    return true;
+}
+
+
+
+
+
+

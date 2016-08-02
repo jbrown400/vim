@@ -1,0 +1,436 @@
+# This file houses all the logic for the movement of each piece
+def movePawn(self, p, _my_pieces, _op_pieces):
+    pawnMoves = []
+    found = False
+
+    if(p.owner.color == "Black"):
+        v = -1
+    elif(p.owner.color == "White"):
+        v = 1
+
+    # Check for en passant
+    if(len(self.game.moves) > 0):
+        # If the last move was a Pawn
+        if(self.game.moves[-1].piece.type == "Pawn"):
+            # Set the piece to a variable for prettier code
+            tmp_piece = self.game.moves[-1].piece
+            # If the piece just moved two space
+            if(abs(self.game.moves[-1].from_rank - self.game.moves[-1].to_rank) == 2):
+                # If the enemy piece is horizonally adjacent to my piece
+                if(tmp_piece.rank == p.rank and chr(ord(tmp_piece.file) - 1) == p.file):
+                    pawnMoves.append([p, chr(ord(p.file) + 1), p.rank + v])
+                if(tmp_piece.rank == p.rank and chr(ord(tmp_piece.file) + 1) == p.file):
+                    pawnMoves.append([p, chr(ord(p.file) - 1), p.rank + v])
+
+    # Check attack
+    if(any((chr(ord(p.file) + 1) + str(p.rank + v)) == (x.file + str(x.rank)) for x in _op_pieces)):
+        pawnMoves.append([p, chr(ord(p.file) + 1), p.rank + v])
+    if(any((chr(ord(p.file) - 1) + str(p.rank + v)) == (x.file + str(x.rank)) for x in _op_pieces)):
+        pawnMoves.append([p, chr(ord(p.file) - 1), p.rank + v])
+    # Check for moves
+    if(p.has_moved is False):
+        # 2 spaces if haven't moved yet
+        move_size = 2
+    else:
+        move_size = 1
+    # Prevent moving onto another pawn
+    for m in range(1, move_size + 1):
+        for x in _my_pieces:
+            if(x.file == p.file and x.rank == p.rank + (m*v)):
+                found = True
+                break
+        for y in _op_pieces:
+            if(y.file == p.file and y.rank == p.rank + (m*v)):
+                found = True
+                break
+        if(found is True):
+            break
+        else:
+            pawnMoves.append([p, p.file, p.rank + (m*v)])
+
+    return pawnMoves
+
+def moveRook(p, _my_pieces, _op_pieces):
+    rookMoves = []
+    # These values will stop checking that direction if they find a like
+    # colored piece
+    Up = True
+    Down = True
+    Right = True
+    Left = True
+    move_size = 8
+    for m in range(1, move_size):
+        # Check to see if any of your own pieces are in the way
+        for w in _my_pieces:
+            # if there is not a conflicting piece
+            # Check for moving "Up" and not running into own color pieces
+            if(p.rank + m < 9):
+                if(w.file == p.file and w.rank == p.rank + m):
+                    Up = False
+            else:
+                Up = False
+            # Check for moving "Down" and not running into own color pieces
+            if(p.rank - m > 0):
+                if(w.file == p.file and w.rank == p.rank - m):
+                    Down = False
+            else:
+                Down = False
+            # Check for moving "Right" and not running into own color pieces
+            if(chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank):
+                    Right = False
+            else:
+                Right = False
+            # Chcek for moving "Left" and not running into own color peices
+            if(chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank):
+                    Left = False
+            else:
+                Left = False
+
+        if(Up is True):
+            rookMoves.append([p, p.file, p.rank + m])
+            if(any((chr(ord(p.file)) + str(p.rank + m)) == (x.file + str(x.rank)) for x in _op_pieces)):
+                Up = False
+        if(Down is True):
+            rookMoves.append([p, p.file, p.rank - m])
+            if(any((chr(ord(p.file)) + str(p.rank - m)) == (x.file + str(x.rank)) for x in _op_pieces)):
+                Down = False
+        if(Right is True):
+            rookMoves.append([p, chr(ord(p.file) + m), p.rank])
+            if(any((chr(ord(p.file) + m) + str(p.rank)) == (x.file + str(x.rank)) for x in _op_pieces)):
+                Right = False
+        if(Left is True):
+            rookMoves.append([p, chr(ord(p.file) - m), p.rank])
+            if(any((chr(ord(p.file) - m) + str(p.rank)) == (x.file + str(x.rank)) for x in _op_pieces)):
+                Left = False
+
+    return rookMoves
+
+def moveKnight(p, _my_pieces, _op_pieces):
+    knightMoves = []
+    # No need to have a stopping vairable b/c knights don't have directional
+    # range of moves.
+    # Up 1, Right 2
+    # If the move would be on the board
+    if(p.rank + 1 < 9 and chr(ord(p.file) + 2) < "i"):
+        # If a like colored piece is not there
+        if(not(any((chr(ord(p.file) + 2) + str(p.rank + 1)) == (x.file + str(x.rank)) for x in _my_pieces))):
+            knightMoves.append([p, chr(ord(p.file) + 2), p.rank + 1])
+
+    # Up 2, Right 1
+    if(p.rank + 2 < 9 and chr(ord(p.file) + 1) < "i"):
+        if(not(any((chr(ord(p.file) + 1) + str(p.rank + 2)) == (x.file + str(x.rank)) for x in _my_pieces))):
+            knightMoves.append([p, chr(ord(p.file) + 1), p.rank + 2])
+
+    # Down 1, Right 2
+    if(p.rank - 1 > 0 and chr(ord(p.file) + 2) < "i"):
+        if(not(any((chr(ord(p.file) + 2) + str(p.rank - 1)) == (x.file + str(x.rank)) for x in _my_pieces))):
+            knightMoves.append([p, chr(ord(p.file) + 2), p.rank - 1])
+
+    # Down 2, Right 1
+    if(p.rank - 2 > 0 and chr(ord(p.file) + 1) < "i"):
+        if(not(any((chr(ord(p.file) + 1) + str(p.rank - 2)) == (x.file + str(x.rank)) for x in _my_pieces))):
+            knightMoves.append([p, chr(ord(p.file) + 1), p.rank - 2])
+
+    # Down 1, Left 2
+    if(p.rank - 1 > 0 and chr(ord(p.file) - 2) > "`"):
+        if(not(any((chr(ord(p.file) - 2) + str(p.rank - 1)) == (x.file + str(x.rank)) for x in _my_pieces))):
+            knightMoves.append([p, chr(ord(p.file) - 2), p.rank - 1])
+
+    # Down 2, Left 1
+    if(p.rank - 2 > 0 and chr(ord(p.file) - 1) > "`"):
+        if(not(any((chr(ord(p.file) - 1) + str(p.rank - 2)) == (x.file + str(x.rank)) for x in _my_pieces))):
+            knightMoves.append([p, chr(ord(p.file) - 1), p.rank - 2])
+
+    # Up 1, Left 2
+    if(p.rank + 1 < 9 and chr(ord(p.file) - 2) > "`"):
+        if(not(any((chr(ord(p.file) - 2) + str(p.rank + 1)) == (x.file + str(x.rank)) for x in _my_pieces))):
+            knightMoves.append([p, chr(ord(p.file) - 2), p.rank + 1])
+
+    # Up 2, Left 1
+    if(p.rank + 2 < 9 and chr(ord(p.file) - 1) > "`"):
+        if(not(any((chr(ord(p.file) - 1) + str(p.rank + 2)) == (x.file + str(x.rank)) for x in _my_pieces))):
+            knightMoves.append([p, chr(ord(p.file) - 1), p.rank + 2])
+    return knightMoves
+
+def moveBishop(p, _my_pieces, _op_pieces):
+    bishopMoves = []
+    # These values will stop checking that direction if they find a like
+    # colored piece
+    up_left = True
+    up_right = True
+    down_left = True
+    down_right = True 
+    move_size = 8
+    for m in range(1, move_size):
+        # check to see if your own pieces are in the way.
+        for w in _my_pieces:
+            # Check up_left
+            if(p.rank + m < 9 and chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank + m):
+                    up_left = False
+            else:
+                up_left = False
+            # Check up_right
+            if(p.rank + m < 9 and chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank + m):
+                    up_right = False
+            else:
+                up_right = False
+            # Check down_left
+            if(p.rank - m > 0 and chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank - m):
+                    down_left = False
+            else:
+                down_left = False
+            # Check down_right
+            if(p.rank - m > 0 and chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank - m):
+                    down_right = False
+            else:
+                down_right = False
+
+        if(up_left is True):
+            bishopMoves.append([p, chr(ord(p.file) - m), p.rank + m])
+            if(any((chr(ord(p.file) - m) + str(p.rank + m)) == (x.file + str(x.rank)) for x in _op_pieces)):
+                up_left = False
+        if(up_right is True):
+            bishopMoves.append([p, chr(ord(p.file) + m), p.rank + m])
+            if(any((chr(ord(p.file) + m) + str(p.rank + m)) == (x.file + str(x.rank)) for x in _op_pieces)):
+                up_right = False
+        if(down_left is True):
+            bishopMoves.append([p, chr(ord(p.file) - m), p.rank - m])
+            if(any((chr(ord(p.file) - m) + str(p.rank - m)) == (x.file + str(x.rank)) for x in _op_pieces)):
+                down_left = False
+        if(down_right is True):
+            bishopMoves.append([p, chr(ord(p.file) + m), p.rank - m])
+            if(any((chr(ord(p.file) + m) + str(p.rank - m)) == (x.file + str(x.rank)) for x in _op_pieces)):
+                down_right = False
+                
+    return bishopMoves
+
+def moveKing(p, _my_pieces, _op_pieces):
+    kingMoves = []
+    up_left = True
+    up_right = True
+    down_left = True
+    down_right = True 
+    Up = True
+    Down = True
+    Right = True
+    Left = True
+    for w in _my_pieces:
+        # Check up_left
+        if(p.rank + 1 < 9 and chr(ord(p.file) - 1) > "`"):
+            if(w.file == chr(ord(p.file) - 1) and w.rank == p.rank + 1):
+                up_left = False
+        else:
+            up_left = False
+        # Check up_right
+        if(p.rank + 1 < 9 and chr(ord(p.file) + 1) < "i"):
+            if(w.file == chr(ord(p.file) + 1) and w.rank == p.rank + 1):
+                up_right = False
+        else:
+            up_right = False
+        # Check down_left
+        if(p.rank - 1 > 0 and chr(ord(p.file) - 1) > "`"):
+            if(w.file == chr(ord(p.file) - 1) and w.rank == p.rank - 1):
+                down_left = False
+        else:
+            down_left = False
+        # Check down_right
+        if(p.rank - 1 > 0 and chr(ord(p.file) + 1) < "i"):
+            if(w.file == chr(ord(p.file) + 1) and w.rank == p.rank - 1):
+                down_right = False
+        else:
+            down_right = False
+
+        if(p.rank + 1 < 9):
+            if(w.file == p.file and w.rank == p.rank + 1):
+                Up = False
+        else:
+            Up = False
+        # Check for moving "Down" and not running into own color peices
+        if(p.rank - 1 > 0):
+            if(w.file == p.file and w.rank == p.rank - 1):
+                Down = False
+        else:
+            Down = False
+        # Check for moving "Right" and not running into own color pieces
+        if(chr(ord(p.file) + 1) < "i"):
+            if(w.file == chr(ord(p.file) + 1) and w.rank == p.rank):
+                Right = False
+        else:
+            Right = False
+        # Check for moving "Left" and not running into own color peices
+        if(chr(ord(p.file) - 1) > "`"):
+            if(w.file == chr(ord(p.file) - 1) and w.rank == p.rank):
+                Left = False
+        else:
+            Left = False
+
+    if(up_left is True):
+        # if(AI.checkMove(p, self, chr(ord(p.file) - 1), p.rank + 1)):
+        kingMoves.append([p, chr(ord(p.file) - 1), p.rank + 1])
+    if(up_right is True):
+        # if(AI.checkMove(p, self, chr(ord(p.file) + 1), p.rank + 1)):
+        kingMoves.append([p, chr(ord(p.file) + 1), p.rank + 1])
+    if(down_left is True):
+        # if(AI.checkMove(p, self, chr(ord(p.file) - 1), p.rank - 1)):
+        kingMoves.append([p, chr(ord(p.file) - 1), p.rank - 1])
+    if(down_right is True):
+        # if(AI.checkMove(p, self, chr(ord(p.file) + 1), p.rank - 1)):
+        kingMoves.append([p, chr(ord(p.file) + 1), p.rank - 1])
+
+    if(Up is True):
+        # if(AI.checkMove(p, self, chr(ord(p.file)), p.rank + 1)):
+        kingMoves.append([p, p.file, p.rank + 1])
+    if(Down is True):
+        # if(AI.checkMove(p, self, chr(ord(p.file)), p.rank - 1)):
+        kingMoves.append([p, p.file, p.rank - 1])
+    if(Right is True):
+        # if(AI.checkMove(p, self, chr(ord(p.file) + 1), p.rank)):
+        kingMoves.append([p, chr(ord(p.file) + 1), p.rank])
+    if(Left is True):
+        # if(AI.checkMove(p, self,  chr(ord(p.file) - 1), p.rank)):
+        kingMoves.append([p, chr(ord(p.file) - 1), p.rank])
+
+    return kingMoves
+
+def moveQueen(p, _my_pieces, _op_pieces):
+    queenMoves = []
+    up_left = True
+    up_right = True
+    down_left = True
+    down_right = True
+    Up = True
+    Down = True
+    Right = True
+    Left = True
+    move_size = 8
+    for m in range(1, move_size):
+        # check to see if your own pieces are in the way.
+        for w in _my_pieces:
+            # Check up_left
+            if(p.rank + m < 9 and chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank + m):
+                    up_left = False
+            else:
+                up_left = False
+            # Check up_right
+            if(p.rank + m < 9 and chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank + m):
+                    up_right = False
+            else:
+                up_right = False
+            # Check down_left
+            if(p.rank - m > 0 and chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank - m):
+                    down_left = False
+            else:
+                down_left = False
+            # Check down_right
+            if(p.rank - m > 0 and chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank - m):
+                    down_right = False
+            else:
+                down_right = False
+            # Check for moving Up
+            if(p.rank + m < 9):
+                if(w.file == p.file and w.rank == p.rank + m):
+                    Up = False
+            else:
+                Up = False
+            # Check for moving "Down" and not running into own color peices
+            if(p.rank - m > 0):
+                if(w.file == p.file and w.rank == p.rank - m):
+                    Down = False
+            else:
+                Down = False
+            # Check for moving "Right" and not running into own color pieces
+            if(chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank):
+                    Right = False
+            else:
+                Right = False
+            # Chcek for moving "Left" and not running into own color peices
+            if(chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank):
+                    Left = False
+            else:
+                Left = False
+
+        if(up_left is True):
+            queenMoves.append([p, chr(ord(p.file) - m), p.rank + m, None, 0, ""])
+            for x in _op_pieces:
+                if((chr(ord(p.file) - m) + str(p.rank + m)) == (x.file + str(x.rank))):
+                    queenMoves[-1][3] = x.type
+                    queenMoves[-1][4] = x._value
+                    queenMoves[-1][5] = x.id
+                    up_left = False
+                    break
+        if(up_right is True):
+            queenMoves.append([p, chr(ord(p.file) + m), p.rank + m, None, 0, ""])
+            for x in _op_pieces:
+                if((chr(ord(p.file) + m) + str(p.rank + m)) == (x.file + str(x.rank))):
+                    queenMoves[-1][3] = x.type
+                    queenMoves[-1][4] = x._value
+                    queenMoves[-1][5] = x.id
+                    up_right = False
+                    break
+        if(down_left is True):
+            queenMoves.append([p, chr(ord(p.file) - m), p.rank - m, None, 0, ""])
+            for x in _op_pieces:
+                if((chr(ord(p.file) - m) + str(p.rank - m)) == (x.file + str(x.rank))):
+                    queenMoves[-1][3] = x.type
+                    queenMoves[-1][4] = x._value
+                    queenMoves[-1][5] = x.id
+                    down_left = False
+                    break
+        if(down_right is True):
+            queenMoves.append([p, chr(ord(p.file) + m), p.rank - m], None, 0, "")
+            for x in _op_pieces:
+                if((chr(ord(p.file) + m) + str(p.rank - m)) == (x.file + str(x.rank))):
+                    queenMoves[-1][3] = x.type
+                    queenMoves[-1][4] = x._value
+                    queenMoves[-1][5] = x.id
+                    down_right = False
+                    break
+        if(Up is True):
+            queenMoves.append([p, p.file, p.rank + m, None, 0, ""])
+            for x in _op_pieces:
+                if((chr(ord(p.file)) + str(p.rank + m)) == (x.file + str(x.rank))):
+                    queenMoves[-1][3] = x.type
+                    queenMoves[-1][4] = x._value
+                    queenMoves[-1][5] = x.id
+                    Up = False
+                    break
+        if(Down is True):
+            queenMoves.append([p, p.file, p.rank - m, None, 0, ""])
+            for x in _op_pieces:
+                if((chr(ord(p.file)) + str(p.rank - m)) == (x.file + str(x.rank))):
+                    queenMoves[-1][3] = x.type
+                    queenMoves[-1][4] = x._value
+                    queenMoves[-1][5] = x.id
+                    Down = False
+                    break
+        if(Right is True):
+            queenMoves.append([p, chr(ord(p.file) + m), p.rank, None, 0, ""])
+            for x in _op_pieces:
+                if((chr(ord(p.file) + m) + str(p.rank)) == (x.file + str(x.rank))):
+                    queenMoves[-1][3] = x.type
+                    queenMoves[-1][4] = x._value
+                    queenMoves[-1][5] = x.id
+                    Right = False
+                    break
+        if(Left is True):
+            queenMoves.append([p, chr(ord(p.file) - m), p.rank, None, 0, ""])
+            for x in _op_pieces:
+                if((chr(ord(p.file) - m) + str(p.rank)) == (x.file + str(x.rank))):
+                    queenMoves[-1][3] = x.type
+                    queenMoves[-1][4] = x._value
+                    queenMoves[-1][5] = x.id
+                    Left = False
+                    break
+    return queenMoves

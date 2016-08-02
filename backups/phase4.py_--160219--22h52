@@ -1,0 +1,212 @@
+#Justin Brown
+#A. I. Phase 4 (Spring 2016)
+#Color Connect
+
+'''This program will take in a file containing an integer defining the size,
+	and integer defining the number of colors, and a map. The goal of the 
+	program is to "connect" each color on the map. The program will the create
+	the necessary data structures to house the necessary data and run the A*
+	algorithm on the map. The result being a new map with each color connceted.
+	The g(n) heuristic will be the number of steps taken so far and the h(n)
+	heuristic will be the manhattan distance to the color end point.
+'''
+
+import sys
+import time
+
+''''''
+class Node(object):
+
+	frontier = []
+
+	end = {}
+
+	def __init__(self, current_state, start, actions, p, s):
+		self.current_state = current_state
+		self.start = start
+		self.actions = actions
+		self.priority = p        #h(n)
+		self.step_count = s 	 #g(n)
+
+
+	#Pre: None
+	#Post: Adds updated start coordinates for a new Node
+	def add_start(self, c, x, y):
+		self.start[c] = [x, y]
+	#Pre: None
+	#Post: Adds ending coordinates for a Node
+	def add_end(self, c, x, y, f):
+		Node.end[c] = [x, y, f]
+	def copy(other):
+		start = {}
+		end = {}
+		for x in other.start:
+			start[x] = other.start[x][:]
+
+		return Node([x[:] for x in other.current_state], start, \
+			[x[:] for x in other.actions], other.priority, other.step_count)
+
+
+''''''
+
+#Calculates Manhattan distance for the move
+def calculate_distance(x1, x2, y1, y2):
+	return (abs(x1 - x2) + abs(y1 - y2))
+
+
+def a_star(node):
+	explored = [node]
+	#while not all colors have been connected
+	while any(x[2] == "False" for x in Node.end.values()):
+
+		f = explored[-1]
+		#Get all possible moves, making sure to exclude duplicat
+		for c in Node.end:
+			#Skips colors that have already been matched
+			if Node.end[c][2] == "False":
+
+				#Simplify these variables for cleaner looking code.
+				f_x1 = Node.end[c][0]
+				f_x2 = f.start[c][0]
+				f_y1 = Node.end[c][1]
+				f_y2 = f.start[c][1]
+
+				
+
+				#Up
+				#Calculate h(n)
+				h = calculate_distance(f_x1, (f_x2 - 1), f_y1, f_y2)
+
+				if (f_x2 - 1) in range(size) and (h == 0 \
+						or f.current_state[f_x2 - 1][f_y2] == 'e'):
+					#Here I check the explored list and froniter to make sure
+					#there is not a similar starting state. If there is already
+					#one there, it will have less moves so I will want that one
+					if not (any(x.start[c] == [f_x2 - 1, f_y2] for x in explored) \
+							or any(x.start[c] == [f_x2 - 1, f_y2] for x in Node.frontier)):
+						tmp = Node.copy(explored[-1])
+						tmp.step_count += 1
+						tmp.priority = h
+						tmp.actions.append([c, f_y2, f_x2 - 1])
+						tmp.start[c][0] -= 1
+						tmp.current_state[f_x2 - 1][f_y2] = c
+						Node.frontier.append(tmp)
+
+				#Down
+				h = calculate_distance(f_x1, (f_x2 + 1), f_y1, f_y2)
+				
+				if (f_x2 + 1) in range(size) and (h == 0 \
+						or f.current_state[f_x2 + 1][f_y2] == 'e'):
+					if not (any(x.start[c] == [f_x2 + 1, f_y2] for x in explored) \
+							or any(x.start[c] == [f_x2 + 1, f_y2] for x in Node.frontier)):
+						tmp = Node.copy(explored[-1])
+						tmp.step_count += 1
+						tmp.priority = h
+						tmp.actions.append([c, f_y2, f_x2 + 1])
+						tmp.start[c][0] += 1
+						tmp.current_state[f_x2 + 1][f_y2] = c
+						Node.frontier.append(tmp)
+
+				#Right
+				
+				h = calculate_distance(f_x1, f_x2, f_y1, (f_y2 + 1))
+				
+				if (f_y2 + 1) in range(size) and (h == 0 \
+						or f.current_state[f_x2][f_y2 + 1] == 'e'):
+					if not (any(x.start[c] == [f_x2, f_y2 + 1] for x in explored) \
+							or any(x.start[c] == [f_x2, f_y2 + 1] for x in Node.frontier)):
+						tmp = Node.copy(explored[-1])
+						tmp.step_count += 1
+						tmp.priority = h
+						tmp.actions.append([c, f_y2 + 1, f_x2])
+						tmp.start[c][1] += 1
+						tmp.current_state[f_x2][f_y2 + 1] = c
+						Node.frontier.append(tmp)
+
+				#Left
+				h = calculate_distance(f_x1, f_x2, f_y1, (f_y2 - 1))
+				
+				if (f_y2 - 1) in range(size) and (h == 0 \
+						or f.current_state[f_x2][f_y2 - 1] == 'e'):
+					if not (any(x.start[c] == [f_x2, f_y2 - 1] for x in explored) \
+							or any(x.start[c] == [f_x2, f_y2 - 1] for x in Node.frontier)):
+						tmp = Node.copy(explored[-1])
+						tmp.step_count += 1
+						tmp.priority = h
+						tmp.actions.append([c, f_y2 - 1, f_x2])
+						tmp.start[c][1] -= 1
+						tmp.current_state[f_x2][f_y2 - 1] = c
+						Node.frontier.append(tmp)
+
+		#Sort the frontier (h(n) + g(n)) based on the distance to the goal (h(n)) and how
+		#many steps have been taken (g(n)). The way I'm doing it here is equivalent to 
+		#adding g(n) and h(n), just in a different format. I've checked the 
+		#numbers
+		Node.frontier = sorted(Node.frontier, key=lambda x: (x.priority + x.step_count))
+		if(len(Node.frontier) > 0):
+			explored.append(Node.frontier.pop(0))
+		else:
+			Node.frontier = [explored[-1]]
+
+		#check if last item in explored state (appended last) is a goal
+		for c in explored[-1].start:
+			if explored[-1].start[c][0] == Node.end[c][0] and\
+					explored[-1].start[c][1] == Node.end[c][1] and \
+					Node.end[c][2] == "False":
+				explored[-1].step_count = 0
+				#Change color status to "True"
+				Node.end[c][2] = "True"
+				#Remove all nodes in frontier 
+				Node.frontier = []
+		
+	output(explored[-1])
+	
+'''End A* function'''		
+		
+
+def output(node):
+	tf = time.clock()
+	total_time = int((tf - ti) * 1000000)
+	print(total_time)
+	print(len(node.actions))
+	for item in node.actions:
+		print(item[0] + ' ' + ' '.join(map(str, item[1:])) + ', ', end='')
+	
+	for row in range(size):
+		print()
+		for col in range(size):
+			print(node.current_state[row][col], end='')
+	print(end="\n\n")
+
+
+
+'''Main Body'''
+f = open(sys.argv[1], "r")
+ti = time.clock()
+
+contraints = [int(s) for s in f.readline().split() if s.isdigit()]
+size = contraints[0]
+number_of_colors = contraints[1]
+
+#carte is French for map
+carte = [[None for x in range(size)] for c in range(size)] 
+
+root = Node(carte, {}, [], 0, 0)
+
+#Read in map and set carte, starting points and ending points
+for row in range(size):
+	l = f.readline()
+	for col in range(size):
+		if(l[2*col] != ' '):
+			carte[row][col] = l[2*col]
+			if((l[2*col] != 'e') and not (l[2*col] in root.start.keys())):
+				root.add_start(l[2*col], row, col)
+			elif((l[2*col] != 'e') and (l[2*col] in root.start.keys())):
+				root.add_end(l[2*col], row, col, "False")
+
+
+#Run A* algorithm
+a_star(root)
+
+#Close file streams because we were taught well
+f.close()

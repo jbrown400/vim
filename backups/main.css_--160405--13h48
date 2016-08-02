@@ -1,0 +1,56 @@
+/*
+ * Custom Layout CSS
+ *
+ */
+
+/* Override some lumx stuff to center buttons */
+
+#addButton {
+  right: 0;
+  margin-right: 30px;
+  position: absolute;
+}
+
+#c-button--push-left {
+  position: relative;
+  top: -7.5px;
+}
+
+.custom-form {
+  margin-top: 20px;
+  margin-left: 5%;
+  margin-right: 5%;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+@media (min-width: 1000px){
+    .mobile {
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 1001px){
+    .desktop {
+        visibility: hidden;
+    }
+    .mFont {
+        background-color: red;
+        font-size: 70px;
+    }
+}
+
+.md-track-ticks {
+  display: none;
+}
+
+/* CSS for the image cycling */
+#cycler {
+    position:relative;
+}
+#cycler img {
+    position:absolute;
+    z-index:1;
+    width: 100%;
+    height: 300px;
+}
+#cycler img.active {z-index:3}

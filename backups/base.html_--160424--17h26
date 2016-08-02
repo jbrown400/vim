@@ -1,0 +1,15 @@
+<!-- Will be the base for each page -->
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'showcase/semantic/dist/semantic.min.css' %}">
+        <script src="{% static 'showcase/semantic/dist/semantic.min.js' %}"></script>
+    </head>
+    <body>
+        <h1>The header will be here</h1>
+                <img src="{% static 'showcase/img/document.png' %}" />
+        {% block content %}
+        {% endblock %} 
+    </body>
+
+</html>

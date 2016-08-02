@@ -1,0 +1,12 @@
+from django.conf.urls import url
+from . import views
+
+app_name = 'showcase'
+urlpatterns = [
+        url(r'^$', views.home, name='home'),
+        url(r'^resume/$', views.resume, name='resume'),
+        url(r'^projects/$', views.projects, name='projects'),
+        url(r'^projects/(?P<project_id>[0-9]+)/$', views.detail, name='detail'),
+        url(r'^concepts/$', views.fundamentals, name='concepts'),
+        url(r'^interests/$', views.interests, name='interests'),
+]

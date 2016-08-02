@@ -1,0 +1,13 @@
+# This file houses the move simulation class. This class is used to keep track
+#  of the many pieces of information a (simulated) move can have. 
+
+class Sim:
+
+    def __init__(self, piece, sim_file, sim_rank, value, promotion=""):
+        self.piece = piece
+        self.sim_file = sim_file
+        self.sim_rank = sim_rank
+        self.value = value
+        self.promotion = promotion
+
+

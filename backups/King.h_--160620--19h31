@@ -1,0 +1,35 @@
+/*
+ * Houses the King piece functionality
+ */
+
+#ifndef KING_H
+#define KING_H
+
+#include <string>
+#include "Piece.h"
+using namespace std;
+
+class King : public Piece {
+    private:
+        string o_color = "";
+        string o_type = "";
+        string o_file = "";
+        int o_rank = 0;
+
+    public:
+        //King Constructor
+        King(string color, string type, string file, int rank);
+           // Piece(color, type, file, rank);
+};
+
+King::King(string color, string type, string file, int rank):
+        Piece(color, type, file, rank){
+    this -> o_color = color;
+    this -> o_type = type;
+    this -> o_file = file;
+    this -> o_rank = rank;
+}
+
+
+
+#endif

@@ -1,0 +1,143 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'page/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'page/bower_components/animated-climacons/css/animated-climacons.min.css' %}">
+        <script src="{% static 'page/script.js' %}"></script>
+        <script src="{% static 'page/keys.js' %}"></script>
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    </head>
+    <body onload="startTime()">
+        <div id="top">
+            <div id="weather-quote">
+                <div id="quote-box">
+                    <div id="quote"></div>
+                    <div id="author"></div>
+                </div>
+                <div class="weather-box" style="height:50%">
+                    <img id="icon" class="invert weather-images"></img>
+                    <div id="current_temp">
+                        <span id="temp_f"></span>&deg
+                    </div>
+                </div>
+            </div>
+            <div id="clock">
+                clock
+            </div>
+            <div id="right-side">
+                <div id="calendar">
+                    <div id="month"></div>
+                    <div id="week-days">
+                        <div class="week-day">Sun</div>
+                        <div class="week-day">Mon</div>
+                        <div class="week-day">Tues</div>
+                        <div class="week-day">Wed</div>
+                        <div class="week-day">Thurs</div>
+                        <div class="week-day">Fri</div>
+                        <div class="week-day">Sat</div>
+                    </div>
+                    <div id="weeks">
+                        <!--
+                        <div class="week-row">
+                            <div class="week-col" id="current-day"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                        </div>
+                        <div class="week-row">
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                        </div>
+                        <div class="week-row">
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                        </div>
+                        <div class="week-row">
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                        </div>
+                        <div class="week-row">
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                        </div>
+                        <div class="week-row">
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                        </div>
+                        <div class="week-row">
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                            <div class="week-col"></div>
+                        </div>
+                        -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="middle">
+            <script type="text/javascript">
+                update();
+            </script>
+        </div>
+        <div id="bottom">
+            <div class="weather-box">
+                <div class="day">Today</div>
+                <img id="iconOne" class="invert weather-images">
+                <div class="temp">
+                    <div id="HLOne"></div>
+                </div>
+                <div class="precip-wind">
+                    <div id="PWOne"></div>
+                </div>
+            </div>
+            <div class="weather-box">
+                <div id="forecastTwo" class="day"></div>
+                <img id="iconTwo" class="invert weather-images">
+                <div class="temp">
+                    <div id="HLTwo"></div>
+                </div>
+                <div class="precip-wind">
+                    <div id="PWTwo"></div>
+                </div>
+            </div>
+            <div class="weather-box">
+                <div id="forecastThree" class="day"></div>
+                <img id="iconThree" class="invert weather-images">
+                <div class="temp">
+                    <div id="HLThree"></div>
+                </div>
+                <div class="precip-wind">
+                    <div id="PWThree"></div>
+                </div>
+            </div>
+            <div class="weather-box">
+                <div id="forecastFour" class="day"></div>
+                <img id="iconFour" class="invert weather-images">
+                <div class="temp">
+                    <div id="HLFour"></div>
+                </div>
+                <div class="precip-wind">
+                    <div id="PWFour"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</head>

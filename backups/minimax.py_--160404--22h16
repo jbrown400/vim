@@ -1,0 +1,170 @@
+# This file houses the Minimax function and the "sub-functions" min-value and max-value
+from games.chess.generation import generateMoves, copy_pieces, getKing, checkCheck
+import time
+
+
+
+def miniMax(self, my_pieces, op_pieces):
+    alpha = -1000
+    beta = 1000
+    max_plies = 30
+    value = -500
+    return_move = None
+    # start timer
+    start = int(round(time.time() * 1000))
+
+    for x in range(1, max_plies + 1):
+        info = max_val(self, my_pieces, op_pieces, x, start, alpha, beta)
+        high = info[0]
+        # break if time limit has been met
+        if(info[2] == -1):
+            print("Reached", x, "plies")
+            return return_move
+        if(high > value):
+            value = high
+            return_move = info[1]
+
+    return return_move
+
+
+def max_val(self, my_pieces, op_pieces, level, start, alpha, beta):
+    if(level == 0):
+        eval = evaluate_state(self, my_pieces, op_pieces)
+        return eval, None, 0
+
+    current = int(round(time.time() * 1000))
+    time_elapsed = current - start
+    if(time_elapsed >= 15000):
+        return 0, [], -1
+
+    best = -1000
+    return_move = None
+    moves = generateMoves(self, my_pieces, op_pieces)
+    for m in moves:
+        tmp_list = copy_pieces(my_pieces)
+        tmp_op_list = copy_pieces(op_pieces)
+        for x in tmp_list:
+            if(m.piece.id == x.id):
+                x.setFile(m.sim_file)
+                x.setRank(m.sim_rank)
+                # if a pawn is being promoted, change the piece type
+                if(m.promotion):
+                    x.setType(m.promotion)
+                for o in tmp_op_list:
+                    if(o.file == m.sim_file and o.rank == m.sim_rank):
+                        tmp_op_list.remove(o)
+                        break
+                break
+        info = min_val(self, tmp_op_list, tmp_list, level - 1, start, alpha, beta)
+        high = info[0]
+        if(return_move is None):
+            if(high >= best):
+                best = high
+                return_move = m
+        else:
+            if(high > best):
+                best = high
+                return_move = m
+        if(best >= beta):
+            return best, return_move, 0
+        alpha = max(best, alpha)
+    return best, return_move, 0
+
+
+def min_val(self, my_pieces, op_pieces, level, start, alpha, beta):
+    if(level == 0):
+        eval = evaluate_state(self, op_pieces, _my_pieces)
+        return eval, None, 0
+
+    current = int(round(time.time() * 1000))
+    time_elapsed = current - start
+    if(time_elapsed >= 15000):
+        return 0, [], -1
+
+    best = 1000
+    return_move = None
+    moves = generateMoves(self, my_pieces, op_pieces)
+    for m in moves:
+        if(m.value > 10):
+            print(m.piece.type, m.piece.file, m.piece.rank)
+        tmp_list = copy_pieces(my_pieces)
+        tmp_op_list = copy_pieces(op_pieces)
+        for x in tmp_list:
+            if(m.piece.id == x.id):
+                x.setFile(m.sim_file)
+                x.setRank(m.sim_rank)
+                # if a pawn is being promoted, change the piece type
+                if(m.promotion):
+                    x.setType(m.promotion)
+                for o in tmp_op_list:
+                    if(o.file == m.sim_file and o.rank == m.sim_rank):
+                        tmp_op_list.remove(o)
+                        break
+                break
+        info = max_val(self, tmp_op_list, tmp_list, level - 1, start, alpha, beta)
+        low = info[0]
+        if(low < best):
+            best = low
+            return_move = m
+        if(best <= alpha):
+            return best, return_move, 0
+        # set beta
+        beta = min(beta, best)
+
+    return best, return_move, 0
+
+
+def evaluate_state(self, my_pieces, op_pieces):
+    # only evaluate from my point of view
+    my_color = self.player.color
+    sum = 0
+    for x in my_pieces + op_pieces:
+        if(x.owner.color == my_color):
+            sum += x.value
+        else:
+            sum -= x.value
+    op_king = getKing(op_pieces)
+    # checkCheck returning false means that your opponent is in check
+    if(op_king is not False):
+        if(checkCheck(op_king, op_pieces, my_pieces) is False):
+            sum += 100
+        else:
+            sum += 150
+    return sum
+
+
+
+def print_board(pieces):
+    for f in range(9, -2, -1): # iterate through the file in reverse order
+        output = ""
+        if f == 9 or f == 0: # then the top or bottom of the board
+            output = "   +------------------------+"
+        elif f == -1: # then show the ranks
+            output = "     a  b  c  d  e  f  g  h"
+        else: # board
+            output = " " + str(f) + " |"
+            # fill in all the ranks with pieces at the current rank
+            for rankOffset in range(0, 8):
+                r = chr(ord("a") + rankOffset) # start at a, with with rank offset increasing the char
+                currentPiece = None
+                for piece in pieces:
+                    if piece.rank == f and piece.file == r: # then we found the piece at (rank, file)
+                        currentPiece = piece
+                        break
+
+                code = "." # default "no piece"
+                if currentPiece:
+                    code = currentPiece.type[0] # the code will be the first character of their type, e.g. 'Q' for "Queen"
+
+                    if currentPiece.type == "Knight": # 'K' is for "King", we use 'N' for "Knights"
+                        code = "N"
+
+                    if currentPiece.owner.id == "1": # the second player (black) is lower case. Otherwise it's upppercase already
+                        code = code.lower()
+
+                output += " " + code + " "
+
+            output += "|"
+
+        print(output)
+

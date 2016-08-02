@@ -1,0 +1,38 @@
+<!-- Will be the base for each page -->
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'showcase/semantic/dist/semantic.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'showcase/style.css' %}">
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="{% static 'showcase/script.js' %}"></script>
+        <script src="{% static 'showcase/semantic/dist/semantic.min.js' %}"></script>
+    </head>
+    <body>
+        <div class="ui small green borderless inverted menu">
+            <h1 class="ui white header item">
+                Justin Brown
+            </h1>
+            <div class="right menu">
+                <div class="item">
+                    <a href="https://github.com/jbrown400">
+                        <button class="ui small button">
+                            <i class="github alternate icon"></i>
+                            GitHub
+                        </button>
+                    </a>
+                </div>
+                <div class="item">
+                    <a href="https://www.linkedin.com/in/justin-brown-894b3b56">
+                        <button class="ui small linkedin button">
+                            <i class="linkedin icon"></i>
+                            LinkedIn
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% block content %}
+        {% endblock %} 
+    </body>
+</html>

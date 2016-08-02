@@ -1,0 +1,33 @@
+{% extends 'browse/base.html' %}
+{% load staticfiles %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  {% if reviews|length > 0 %}
+    <h2>Latest {{reviews|length}} Review(s)</h2>
+    {% for review in reviews %}
+      <a href="{% url 'profile' review.source.id %}">
+        {% if review.source.first_name or review.source.last_name %}
+          {{ review.source.first_name }} {{ review.source.last_name }}</a>
+        {% else %}
+          {{ review.source.username }}</a>
+        {% endif %}
+      &nbsp; -- &nbsp;
+      {{ review.course.name }}
+      &nbsp; -- &nbsp;
+      <a href="{% url 'review' review_id=review.id %}">View</a><br />
+    {% endfor %}
+  {% else %}
+    <h2>There are no reviews</h2>
+  {% endif %}
+
+  <br /> <br />
+
+  {% for var in numbers %}
+    {{ var }}<br />
+  {% endfor %}
+
+  <br /><br />
+  <h2>This is PandaZu</h2><br />
+  <img width="900" height="600" src="{% static "browse/img/PandaZu.jpg" %}" />
+{% endblock %}

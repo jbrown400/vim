@@ -1,0 +1,19 @@
+<ion-view title="Oven Ready">
+    <ion-content>
+        <ion-list>
+            <div ng-repeat="op in oven">
+                <div class="card">
+                    <ion-checkbox>
+                        <div class="item">
+                            {{ op.title }}
+                        </div>
+                    </ion-checkbox>
+                </div>
+            </div>
+            </div>
+        </ion-list>
+        <div id="sendButtonContainer" ng-controller="PopupCtrl">
+            <button class="button button-large" id="sendToCart" ng-click="showConfirm()">Order Now</button> 
+        </div>
+    </ion-content>
+</ion-view>

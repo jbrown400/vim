@@ -1,0 +1,86 @@
+<ion-view view-title="Cook N&uumlk">
+    <ion-content>
+        <div ng-repeat="type in types">
+            <div ng-if="$index % 3 == 0" class="row" style="padding: 0px;">
+                <div class="card">
+                    <a href="#/app/cooknuk/{{types[$index].id}}">
+                        <div class="item item-image">
+                            <img src="{{types[$index].img}}">
+                        </div>
+                        <div class="item">
+                            {{types[$index].title}}
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#/app/cooknuk/{{types[$index + 1].id}}">
+                        <div class="item item-image">
+                            <img src="{{types[$index + 1].img}}">
+                        </div>
+                        <div class="item">
+                            {{types[$index + 1].title}}
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#/app/cooknuk/{{types[$index + 2].id}}">
+                        <div class="item item-image">
+                            <img src="{{types[$index + 2].img}}">
+                        </div>
+                        <div class="item">
+                            {{types[$index + 2].title}}
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+          <h2 class="title">Check out these suggestions</h2>
+          <ion-slide-box>
+          <ion-slide>
+            <div class = "box box1 row">
+
+                <div class="col"><div class="card text-center"><img src="img/bbq.jpeg"  height="150px" ><h4 class="title text-center">NutriSystem Smoky BBQ</h4></div>
+                </div>
+                <div class="col"><div class="card text-center"><img src="img/rice.jpeg"   height="150px" ><h4 class="title text-center">Zatarain's Dirty Rice</h4></div>
+                </div>
+
+                 </div>
+          </ion-slide>
+          <ion-slide>
+            <div class = "box box2 row">
+
+              <div class="col"><div class="card text-center"><img src="/img/penne.jpeg" height="150ox" ><h4 class="title text-center">Chicken Alfredo</h4></div>
+              </div>
+              <div class="col"><div class="card text-center"><img src="/img/skillets.jpeg"  height="150px" ><h4 class="title text-center">Velveeta Skillets</h4></div>
+              </div>
+
+            </div>
+            </ion-slide>
+            <ion-slide>
+              <div class = "box box3 row">
+
+                  <div class="col"> <div class="card text-center"><img src="/img/pasta.jpeg"   height="150px" ><h4 class="title text-center">Chicken Margherita </h4></div>
+                  </div>
+                  <div class="col"><div class="card text-center"><img src="/img/pizza.jpeg"   height="150px" ><h4 class="title text-center">Nutri System Pizza</h4></div>
+                  </div>
+
+                </div>
+              </ion-slide>
+          <ion-slide>
+            <div class = "box box4 row">
+
+                <div class="col"> <div class="card text-center"><img src="/img/metaballs.jpeg" height="150px" ><h4 class="title text-center">Meat Balls</h4></div>
+                </div>
+                <div class="col"><div class="card text-center"><img src="/img/salad.jpeg" height="150px" ><h4 class="title text-center">Pasta Salad</h4></div>
+                </div>
+
+            </div>
+          </ion-slide>
+          </ion-slide-box>
+        </div>
+        <div id="sendButtonContainer" ng-controller="PopupCtrl">
+            <button class="button button-large" id="sendToCart" ng-click="showConfirm()">Send Week To Cart</button>
+        </div>
+    </ion-content>
+</ion-view>

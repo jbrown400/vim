@@ -1,0 +1,21 @@
+Issues:
+-----------------------------------
+1. Using deep copy
+2. Using other pieces to block check (not working)
+3. Attacking piece putting King in check (not working)
+4. King trying to attack pieces who have their own kind who can attack the king
+        if the king tries to take the piece.
+
+
+///////////////////////////////////
+
+Solutions:
+-----------------------------------
+1. Generate possible attack moves like I have been doing but instead
+	of keeping a whole list of moves, make lists for each tile
+	that contain all the possible pieces that move there. That way
+	the king can move to the space if the list for that tile empty
+
+2. Unknown
+
+3. Unknown

@@ -1,0 +1,55 @@
+<ion-view view-title="Cook N&uumlk">
+    <ion-content>
+        <div ng-repeat="type in types">
+            <div ng-if="$index % 3 == 0" class="row" style="padding: 0px;">
+                <div class="card">
+                    <a href="#/app/cooknuk/{{types[$index].id}}">
+                        <div class="item item-image">
+                            <img src="{{types[$index].img}}">
+                        </div>
+                        <div class="item">
+                            {{types[$index].title}}
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#/app/cooknuk/{{types[$index + 1].id}}">
+                        <div class="item item-image">
+                            <img src="{{types[$index + 1].img}}">
+                        </div>
+                        <div class="item">
+                            {{types[$index + 1].title}}
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="#/app/cooknuk/{{types[$index + 2].id}}">
+                        <div class="item item-image">
+                            <img src="{{types[$index + 2].img}}">
+                        </div>
+                        <div class="item">
+                            {{types[$index + 2].title}}
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="item">
+                Save Your Supper
+            </div>
+            <div class="item">
+                <ion-scroll direction="x">
+                    <div ng-repeat="day in days" style="display:inline-block">
+                        <div class="item">
+                            {{days[$index].title}}
+                        </div>
+                    </div>
+                </ion-scroll>
+            </div>
+        </div> 
+        <div id="sendButtonContainer" ng-controller="PopupCtrl">
+            <button class="button button-large" id="sendToCart" ng-click="showConfirm()">Send Week To Cart</button> 
+        </div>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,30 @@
+<ion-view view-title="Ingredients">
+    <ion-content>
+        <ion-list>
+            <div class="positive card">
+                <ion-checkbox>
+                    <div class="item">
+                        Tortillas
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Beef
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Beans
+                    </div>
+                </ion-checkbox>
+            </div>
+        </ion-list>
+        <div id="sendButtonContainer" ng-controller="PopupCtrl">
+            <button class="button button-large" id="sendToList" ng-click="showConfirm()">Send To Cart</button> 
+        </div>
+    </ion-content>
+</ion-view>

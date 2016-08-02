@@ -1,0 +1,34 @@
+# Views.py for SHOWCASE
+
+from django.shortcuts import render
+from django.template import loader
+from django.http import HttpResponse
+from django.views import generic
+
+
+'''
+def home(request):
+    template = loader.get_template('showcase/home.html')
+    return HttpResponse(template.render(request))
+'''
+class HomeView(generic.DetailView):
+    template_name = 'showcase/home.html'
+
+def resume(request):
+    template = loader.get_template('showcase/resume.html')
+    return HttpResponse(template.render(request))
+
+
+def currentProject(request):
+    template = loader.get_template('showcase/current_projects.html')
+    return HttpResponse(template.render(request))
+
+
+def finishedProjects(request):
+    template = loader.get_template('showcase/finished_projects.html')
+    return HttpResponse(template.render(request))
+
+
+def interests(request):
+    template = loader.get_template('showcase/interests.html')
+    return HttpResponse(template.render(request))

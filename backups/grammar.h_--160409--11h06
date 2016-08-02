@@ -1,0 +1,643 @@
+#ifndef GRAMMAR_H
+#define GRAMMAR_H
+ 
+#include <stdlib.h>
+#include <string>
+#include <regex>
+
+using namespace std;
+
+namespace PARSERS
+{
+    string TOKEN;
+
+    void getToken();
+    void quit( string _s = "" );
+    
+    // Relation :=   < | > | eq
+    regex REGEX_RELATION("(<|>|eq)");
+    // AddOperator :=   + | - | or
+    regex REGEX_ADDOPERATOR("(\\+|-|or)");
+    regex REGEX_MULOPERATOR("(\\*|/|and)");
+    
+    // non-empty sequences of digits optionally preceded with either a ‘+’ or ‘-’ sign.
+    regex REGEX_INTEGER     ("(\\+|-)?[0-9]+");
+    // numbers are Integers followed by a ‘.’, followed by a non-empty sequence of digits.
+    regex REGEX_DECIMAL     ("((\\+|-)?[0-9]+)\\.[0-9]+");
+    // any non-space sequences of characters enclosed in “”. e.g. “hello” “abc123”
+    regex REGEX_STRING      ("\"[a-zA-Z0-9]+\"");
+    // is, +, -, *, /, or, and, ~, (, ), lt, gt, eq , $, !, print, inc, ret, if, fi, ex, loop, pool, prog, blip, blorp
+    regex REGEX_KEYWORD     ("(is|\\+|-|\\*|/|or|and|~|\\(|\\)|lt|gt|eq|\\$|\\!|print|inc|ret|if|fi|ex|loop|pool|prog|blip|blorp)");
+    // sequences of digits or letters. The first character must be a letter, and an identifier cannot be a Keyword. 
+    regex REGEX_IDENTIFIER ("[a-zA-Z]{1}[a-zA-Z0-9]*");
+    
+    void Expression();
+    void SimpleExpression();
+    void Term();
+    void Factor();
+    void Assignment();
+    void IncStatement();
+    void RetStatement();
+    void IfStatement();
+    void LoopStatement();
+    void PrintStatement();
+    void Statement();
+    void StatementSequence();
+    void ParamSequence();
+    void RoutineDeclaration();
+    
+    bool isRelation( string _s );
+    bool isAddOperator( string _s );
+    bool isMulOperator( string _s );
+    bool isInteger( string _s );
+    bool isDecimal( string _s );
+    bool isString(string _s);
+    bool isKeyword(string _s);
+    bool isIdentifier(string _s);
+    
+    bool isFirst_Statement(string _s);
+}
+    
+
+// Expression := SimpleExpression [ Relation SimpleExpression ]
+void PARSERS::Expression()
+{
+    PARSERS::SimpleExpression();
+
+    // match 0 or 1 Relation SimpleExpression sets
+    if( isRelation( TOKEN ) )
+    {
+        getToken();
+        
+        PARSERS::SimpleExpression();
+    }
+
+    return;
+}
+    
+// SimpleExpression := Term { AddOperator Term }
+void PARSERS::SimpleExpression()
+{
+    PARSERS::Term();
+
+    while( isAddOperator( TOKEN ) )
+    {
+        getToken();
+
+        PARSERS::Term();
+    }
+
+    return;
+}
+
+// Term := Factor { MulOperator Factor }
+void PARSERS::Term()
+{
+    PARSERS::Factor();
+
+    while( isMulOperator( TOKEN ) )
+    {
+        getToken();
+
+        PARSERS::Factor();
+    }
+}
+
+// Factor :=  integer | decimal | string | identifier | ( Expression ) | ~ Factor
+void PARSERS::Factor()
+{
+    if( isInteger( TOKEN ) )
+    {
+        getToken();
+
+        // End of Factor
+    }
+    else if( isDecimal( TOKEN ) )
+    {
+        getToken();
+
+        // End of Factor
+    }
+    else if( isString( TOKEN ) )
+    {
+        getToken();
+
+        // End of Factor
+    }
+    else if( isIdentifier( TOKEN ) )
+    {
+        getToken();
+
+        // End of Factor
+    }
+    else if( "(" == TOKEN )
+    {
+        getToken();
+
+        PARSERS::Expression();
+
+        if( ")" == TOKEN )
+        {
+            getToken();
+
+            // End of Factor
+        }
+        else
+        {
+            // failed to get end of expression
+            quit(TOKEN + " " + "expected ')'");
+        }
+
+    }
+    else if( "~" == TOKEN )
+    {
+        getToken();
+
+        PARSERS::Factor();
+    }
+    else
+    {
+        // failed to match token
+        quit(TOKEN + " " + "expected vaild token");
+    }
+}
+
+// Assignment := identifier is Expression !
+void PARSERS::Assignment()
+{
+    if( isIdentifier( TOKEN ) )
+    {
+        getToken();
+
+        if( "is" == TOKEN )
+        {
+            getToken();
+
+            PARSERS::Expression();
+
+            if( "!" == TOKEN )
+            {
+                getToken();
+
+                // end of Assignment
+            }
+            else
+            {
+                // expected !
+                quit(TOKEN + " " + "expected '!'");
+            }
+        }
+        else
+        {
+            // expected is token
+            quit(TOKEN + " " + "expected 'is'");
+        }
+    }
+    else
+    {
+        // invalid identifier
+        quit(TOKEN + " " + "invailid identifier");
+    }
+
+    return;
+}
+
+// IncStatement := inc identifier !
+void PARSERS::IncStatement()
+{
+    if( "inc" == TOKEN )
+    {
+        getToken();
+
+        if( isIdentifier( TOKEN ) )
+        {
+            getToken();
+
+            if( "!" == TOKEN )
+            {
+                getToken();
+
+                // end of inc
+            }
+            else
+            {
+                // expected !
+                quit(TOKEN + " " + "expected !");
+            }
+        }
+        else
+        {
+            // expecting identifier
+            quit(TOKEN + " " + "expected identifier");
+        }
+    }
+    else
+    {
+        // expected inc
+        quit(TOKEN + " " + "expected 'inc'");
+    }
+    return;
+}
+
+// RetStatement := ret identifier !
+void PARSERS::RetStatement()
+{
+    if( "ret" == TOKEN )
+    {
+        getToken();
+
+        if( isIdentifier( TOKEN ) )
+        {
+            getToken();
+
+            if( "!" == TOKEN )
+            {
+                getToken();
+
+                // end of ret
+            }
+            else
+            {
+                // expected !
+                quit(TOKEN + " " + "expected '!'");
+            }
+        }
+        else
+        {
+            // expecting identifier
+            quit(TOKEN + " " + "expected identifier");
+        }
+    }
+    else
+    {
+        // expected ret
+        quit(TOKEN + " " + "expected ret'");
+    }
+    return;
+}
+
+// IfStatement := if $ Expression $ StatementSequence  [ ex StatementSequence ] fi
+void PARSERS::IfStatement()
+{
+    if( "if" == TOKEN )
+    {
+        getToken();
+
+        if( "$" == TOKEN )
+        {
+            getToken();
+
+            PARSERS::Expression();
+
+            if( "$" == TOKEN )
+            {
+                getToken();
+
+                PARSERS::StatementSequence();
+
+                // parse 0 or 1 ex StatementSequence
+                if( "ex" == TOKEN )
+                {
+                    getToken();
+
+                    PARSERS::StatementSequence();
+                }
+
+                if( "fi" == TOKEN )
+                {
+                    getToken();
+
+                    // end of if
+                }
+                else
+                {
+                    // expected fi
+                    quit(TOKEN + " " + "Expected 'fi'");
+                }
+            }
+            else
+            {
+                // expected $
+                quit(TOKEN + " " + "Expected '$'");
+            }
+        }
+        else
+        {
+            // expecting $
+            quit(TOKEN + " " + "Expected '$'");
+        }
+    }
+    else
+    {
+        // expected if
+        quit(TOKEN + " " + "Expected 'if'");
+    }
+
+    return;
+}
+
+// LoopStatement = loop $ Expression $ StatementSequence pool
+void PARSERS::LoopStatement()
+{
+    if( "loop" == TOKEN )
+    {
+        getToken();
+
+        if( "$" == TOKEN )
+        {
+            getToken();
+
+            PARSERS::Expression();
+
+            if( "$" == TOKEN )
+            {
+                getToken();
+
+                PARSERS::StatementSequence();
+
+                if( "pool" == TOKEN )
+                {
+                    getToken();
+
+                    // end of loop
+                }
+                else
+                {
+                    // expected pool
+                    quit(TOKEN + " " + "expected pool'");
+                }
+            }
+            else
+            {
+                // expected $
+                quit(TOKEN + " " + "expected '$'");
+            }
+        }
+        else
+        {
+            // expecting $
+            quit(TOKEN + " " + "expected '$'");
+        }
+    }
+    else
+    {
+        // expected loop
+        quit(TOKEN + " " + "expected 'loop'");
+    }
+
+    return;
+}
+
+// PrintStatement = print identifier !
+void PARSERS::PrintStatement()
+{
+    if( "print" == TOKEN )
+    {
+        getToken();
+
+        if( isIdentifier( TOKEN ) )
+        {
+            getToken();
+
+             if( "!" == TOKEN )
+            {
+                getToken();
+
+                // end of print
+            }
+            else
+            {
+                // expected !
+                quit();
+            }
+        }
+        else
+        {
+            // expecting identifier
+            quit();
+        }
+    }
+    else
+    {
+        // expected print
+        quit();
+    }
+
+    return;
+}
+
+// Statement := [ Assignment | IfStatement | LoopStatement | PrintStatement | IncStatement | RetStatement ]
+void PARSERS::Statement()
+{
+    // see if token is in FIRST(Statement)
+
+    if( isIdentifier( TOKEN ) )
+    {
+        PARSERS::Assignment();
+    }
+    else if ( "if"  == TOKEN )
+    {
+        PARSERS::IfStatement();
+    }
+    else if( "loop"  == TOKEN )
+    {
+        PARSERS::LoopStatement();
+    }
+    else if( "print"  == TOKEN )
+    {
+        PARSERS::PrintStatement();
+    }
+    else if( "inc"  == TOKEN )
+    {
+        PARSERS::IncStatement();
+    }
+    else if( "ret"  == TOKEN )
+    {
+        PARSERS::RetStatement();
+    }
+    
+    return;
+}
+
+// StatementSequence = Statement { Statement }
+void PARSERS::StatementSequence()
+{
+    PARSERS::Statement();
+    
+    while( isFirst_Statement( TOKEN ) )
+    {
+        PARSERS::Statement();
+    }
+    
+    return;
+}
+
+// ParamSequence :=  identifier  { , identifier } 
+void PARSERS::ParamSequence()
+{
+    if( isIdentifier( TOKEN ) )
+    {
+        getToken();
+
+        while ( "," == TOKEN )
+        {
+            getToken();
+
+            if( isIdentifier( TOKEN ) )
+            {
+                // nom nom nom
+                getToken();
+            }
+            else
+            {
+                // expecting identifier
+                quit();
+            }
+        }
+    }
+    else
+    {
+        // failed to match identifier
+        quit();
+    }
+
+    return; // paramSequence
+}
+
+// RoutineDeclaration := prog identifier $ [ ParamSequence ] $ blip StatementSequence blorp
+void PARSERS::RoutineDeclaration()
+{
+    if( "prog" == TOKEN )
+    {
+        getToken();
+
+        if( isIdentifier( TOKEN ) )
+        {
+            getToken();
+
+            if( "$" == TOKEN )
+            {
+                getToken();
+
+                // process 0 or 1 ParamSequence
+                if( isIdentifier( TOKEN ) )
+                {
+                    PARSERS::ParamSequence();
+                }
+
+                if( "$" == TOKEN )
+                {
+                    getToken();
+
+                    if( "blip" == TOKEN )
+                    {
+                        getToken();
+
+                        PARSERS::StatementSequence();
+
+                        if( "blorp" == TOKEN )
+                        {
+                            getToken();
+
+                            // end of sentence
+                        }
+                        else
+                        {
+                            // failed to match blorp
+                            quit();
+                        }
+                    }
+                    else
+                    {
+                        // failed to match blip
+                        quit();
+                    }
+                }
+                else
+                {
+                    // failed to match seperator
+                    quit();
+                }
+            }
+            else
+            {
+                // failed to match seperator
+                quit();
+            }
+        }
+        else
+        {
+            // failed to match identifier
+            quit();
+        }
+    }
+    else
+    {
+        // failed to match routine declaration
+        quit();
+    }
+
+    return; // RoutineDeclaration
+}
+
+bool PARSERS::isRelation( string _s )
+{
+    return regex_match(_s, REGEX_RELATION);
+}
+bool PARSERS::isAddOperator( string _s )
+{
+    return regex_match(_s, REGEX_ADDOPERATOR);
+}
+bool PARSERS::isMulOperator( string _s )
+{
+    return regex_match(_s, REGEX_MULOPERATOR);
+}
+bool PARSERS::isInteger( string _s )
+{
+    return regex_match(_s, REGEX_INTEGER);
+}
+bool PARSERS::isDecimal( string _s )
+{
+    return regex_match(_s, REGEX_DECIMAL);
+}
+bool PARSERS::isString(string _s)
+{
+    return regex_match(_s, REGEX_STRING);
+}
+bool PARSERS::isKeyword(string _s)
+{
+    return regex_match(_s, REGEX_KEYWORD);
+}
+bool PARSERS::isIdentifier(string _s)
+{
+    return (regex_match(_s, REGEX_IDENTIFIER) && !isKeyword(_s));
+}
+
+bool PARSERS::isFirst_Statement(string _s)
+{
+    if( isIdentifier( TOKEN ) || "if"  == TOKEN || "loop"  == TOKEN || "print"  == TOKEN || "inc"  == TOKEN || "ret"  == TOKEN )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+void PARSERS::getToken()
+{
+    cin >> PARSERS::TOKEN;
+    //cout << TOKEN << endl;
+    
+    return;
+}
+
+void PARSERS::quit( string _s )
+{
+    cout << "INVALID!" << endl;//! => " << _s << endl;
+    exit(0);
+}
+
+#endif

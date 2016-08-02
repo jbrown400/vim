@@ -1,0 +1,17 @@
+<ion-view view-title="Ingredients">
+    <ion-content>
+        <div class="list">
+            <div class="item item-button-right">
+                Item 1
+                <ion-checkbox>Red</ion-checkbox>
+            </div>
+            <div class="item item-button-right">
+                Item 2
+            </div>
+            <div class="item item-button-right">
+                Item 3
+            </div>
+
+        </div>
+    </ion-content>
+</ion-view>

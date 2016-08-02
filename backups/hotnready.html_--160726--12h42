@@ -1,0 +1,19 @@
+<ion-view title="Hot N' Ready">
+    <ion-content>
+        <ion-list>
+            <div ng-repeat="op in hot">
+                <div class="card">
+                    <ion-checkbox>
+                        <div class="item">
+                            {{ op.title }}
+                        </div>
+                    </ion-checkbox>
+                </div>
+            </div>
+            </div>
+        </ion-list>
+        <div id="sendButtonContainer" ng-controller="QuickCtrl">
+            <button class="button button-large" id="sendToCart" ng-click="showConfirm()">Order Now</button> 
+        </div>
+    </ion-content>
+</ion-view>

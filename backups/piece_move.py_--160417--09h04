@@ -1,0 +1,590 @@
+# This file houses all the logic for the movement of each piece
+from games.chess.sim_move import Sim
+
+def movePawn(self, p, _my_pieces, _op_pieces):
+    p_file = p.file
+    p_rank = p.rank
+    pawnMoves = []
+
+    if(p.owner.color == "Black"):
+        v = -1
+    elif(p.owner.color == "White"):
+        v = 1
+    if(len(self.game.moves) > 0):
+        # only check for en passant if the last move was a pawn
+        if(self.game.moves[-1].piece.type == "Pawn"):
+            passant = checkEnPassant(self, p, v)
+            if(passant):
+                pawnMoves.extend(passant)
+
+    # Check for attacks
+    for x in _op_pieces:
+        if((chr(ord(p.file) + 1) + str(p.rank + v)) == (x.file + str(x.rank))):
+            pawnMoves.append(Sim(p, chr(ord(p_file) + 1), p_rank + v, x.value))
+        if((chr(ord(p.file) - 1) + str(p.rank + v)) == (x.file + str(x.rank))):
+            pawnMoves.append(Sim(p, chr(ord(p_file) - 1), p_rank + v, x.value))
+
+    # check for avenging
+    for y in _my_pieces:
+        if((chr(ord(p.file) + 1) + str(p.rank + v)) == (y.file + str(y.rank))):
+            y.setAvenge()
+        if((chr(ord(p.file) - 1) + str(p.rank + v)) == (y.file + str(y.rank))):
+            y.setAvenge()
+
+    if(p.has_moved is False):
+        move_size = 2
+    else:
+        move_size = 1
+
+    front = False
+    for m in range(1, move_size + 1):
+        for x in _op_pieces + _my_pieces:
+            if(x.file == p.file and x.rank == p.rank + (m*v)):
+                front = True
+                break
+        if(front is False):
+            pawnMoves.append(Sim(p, p_file, p_rank + (m*v), 0))
+            # include every possible pawn promotion as a move
+            if(p_rank + (m*v) == 8 or p_rank + (m*v) == 1):
+                pawnMoves.append(Sim(p, p_file, p_rank + (m*v), 9, "Queen"))
+                pawnMoves.append(Sim(p, p_file, p_rank + (m*v), 3, "Knight"))
+                pawnMoves.append(Sim(p, p_file, p_rank + (m*v), 3, "Bishop"))
+                pawnMoves.append(Sim(p, p_file, p_rank + (m*v), 7, "Rook"))
+        else:
+            break
+    return pawnMoves
+
+
+def checkEnPassant(self, p, v):
+    pawnMoves = []
+    # Check for en passant
+    # Set the piece to a variable for prettier code
+    tmp_piece = self.game.moves[-1].piece
+    # If the piece just moved two space
+    if(abs(self.game.moves[-1].from_rank - self.game.moves[-1].to_rank) == 2):
+        # If the enemy piece is horizonally adjacent to my piece
+        if(tmp_piece.rank == p.rank and chr(ord(tmp_piece.file) - 1) == p.file):
+            pawnMoves.append(Sim(p, chr(ord(p.file) + 1), p.rank + v, tmp_piece.value))
+        if(tmp_piece.rank == p.rank and chr(ord(tmp_piece.file) + 1) == p.file):
+            pawnMoves.append(Sim(p, chr(ord(p.file) - 1), p.rank + v, tmp_piece.value))
+    return pawnMoves
+
+
+def moveRook(p, _my_pieces, _op_pieces):
+    p_file = p.file
+    p_rank = p.rank
+    rookMoves = []
+    # These values will stop checking that direction if they find a like
+    # colored piece
+    Up = True
+    Down = True
+    Right = True
+    Left = True
+    move_size = 8
+    for m in range(1, move_size):
+        if(Up is False and Down is False and Right is False and Left is False):
+            # don't continue checking if the piece can't move
+            break
+        for w in _my_pieces + _op_pieces:
+            if(Up is True):
+                if(p.rank + m < 9):
+                    if(w.file == p.file and w.rank == p.rank + m):
+                        if(p.owner.color == w.owner.color):
+                            Up = False
+                            w.setAvenge()
+                        else:
+                            rookMoves.append(Sim(p, p_file, p_rank + m, w.value))
+                            Up = False
+                else:
+                    Up = False
+
+            if(Down is True):
+                if(p.rank - m > 0):
+                    if(w.file == p.file and w.rank == p.rank - m):
+                        if(p.owner.color == w.owner.color):
+                            Down = False
+                            w.setAvenge()
+                        else:
+                            rookMoves.append(Sim(p, p_file, p_rank - m, w.value))
+                            Down = False
+                else:
+                    Down = False
+
+            if(Right is True):
+                if(chr(ord(p.file) + m) < "i"):
+                    if(w.file == chr(ord(p.file) + m) and w.rank == p.rank):
+                        if(p.owner.color == w.owner.color):
+                            Right = False
+                            w.setAvenge()
+                        else:
+                            rookMoves.append(Sim(p, chr(ord(p_file) + m), p_rank, w.value))
+                            Right = False
+                else:
+                    Right = False
+
+            if(Left is True):
+                if(chr(ord(p.file) - m) > "`"):
+                    if(w.file == chr(ord(p.file) - m) and w.rank == p.rank):
+                        if(p.owner.color == w.owner.color):
+                            Left = False
+                            w.setAvenge()
+                        else:
+                            rookMoves.append(Sim(p, chr(ord(p_file) - m), p_rank, w.value))
+                            Left = False
+                else:
+                    Left = False
+        
+        if(Up is True):
+            rookMoves.append(Sim(p, p_file, p_rank + m, 0))
+        if(Down is True):
+            rookMoves.append(Sim(p, p_file, p_rank - m, 0))
+        if(Right is True):
+            rookMoves.append(Sim(p, chr(ord(p_file) + m), p_rank, 0))
+        if(Left is True):
+            rookMoves.append(Sim(p, chr(ord(p_file) - m), p_rank, 0))
+
+    return rookMoves
+
+
+def moveKnight(p, _my_pieces, _op_pieces):
+    p_file = p.file
+    p_rank = p.rank
+    knightMoves = []
+    var_one = True
+    var_two = True
+    var_three = True
+    var_four = True
+    var_five = True
+    var_six = True
+    var_seven = True
+    var_eight = True
+
+    for x in _my_pieces:
+        if(p_rank + 1 < 9 and chr(ord(p_file) + 2) < "i"):
+            if((chr(ord(p_file) + 2) + str(p_rank + 1)) == (x.file + str(x.rank))):
+                var_one = False
+                x.setAvenge()
+        else:
+            var_one = False
+
+        if(p_rank + 2 < 9 and chr(ord(p_file) + 1) < "i"):
+            if((chr(ord(p_file) + 1) + str(p_rank + 2)) == (x.file + str(x.rank))):
+                var_two = False
+                x.setAvenge()
+        else:
+            var_two = False
+
+        if(p_rank - 1 > 0 and chr(ord(p_file) + 2) < "i"):
+            if((chr(ord(p_file) + 2) + str(p_rank - 1)) == (x.file + str(x.rank))):
+                var_three = False
+                x.setAvenge()
+        else:
+            var_three = False
+
+        if(p_rank - 2 > 0 and chr(ord(p_file) + 1) < "i"):
+            if((chr(ord(p_file) + 1) + str(p_rank - 2)) == (x.file + str(x.rank))):
+                var_four = False
+                x.setAvenge()
+        else:
+            var_four = False
+
+        if(p_rank - 1 > 0 and chr(ord(p_file) - 2) > "`"):
+            if((chr(ord(p_file) - 2) + str(p_rank - 1)) == (x.file + str(x.rank))):
+                var_five = False
+                x.setAvenge()
+        else:
+            var_five = False
+
+        if(p_rank - 2 > 0 and chr(ord(p_file) - 1) > "`"):
+            if((chr(ord(p_file) - 1) + str(p_rank - 2)) == (x.file + str(x.rank))):
+                var_six = False
+                x.setAvenge()
+        else:
+            var_six = False
+
+        if(p_rank + 1 < 9 and chr(ord(p_file) - 2) > "`"):
+            if((chr(ord(p_file) - 2) + str(p_rank + 1)) == (x.file + str(x.rank))):
+                var_seven = False
+                x.setAvenge()
+        else:
+            var_seven = False
+
+        if(p_rank + 2 < 9 and chr(ord(p_file) - 1) > "`"):
+            if((chr(ord(p_file) - 1) + str(p_rank + 2)) == (x.file + str(x.rank))):
+                var_eight = False
+                x.setAvenge()
+        else:
+            var_eight = False
+
+    if(var_one is True):
+        knightMoves.append(Sim(p, chr(ord(p_file) + 2), p_rank + 1, 0))
+
+    if(var_two is True):
+        knightMoves.append(Sim(p, chr(ord(p_file) + 1), p_rank + 2, 0))
+
+    if(var_three is True):
+        knightMoves.append(Sim(p, chr(ord(p_file) + 2), p_rank - 1, 0))
+
+    if(var_four is True):
+        knightMoves.append(Sim(p, chr(ord(p_file) + 1), p_rank - 2, 0))
+
+    if(var_five is True):
+        knightMoves.append(Sim(p, chr(ord(p_file) - 2), p_rank - 1, 0))
+
+    if(var_six is True):
+        knightMoves.append(Sim(p, chr(ord(p_file) - 1), p_rank - 2, 0))
+
+    if(var_seven is True):
+        knightMoves.append(Sim(p, chr(ord(p_file) - 2), p_rank + 1, 0))
+
+    if(var_eight is True):
+        knightMoves.append(Sim(p, chr(ord(p_file) - 1), p_rank + 2, 0))
+
+    for y in knightMoves:
+        for x in _op_pieces:
+            if((y.sim_file + str(y.sim_rank)) == (x.file + str(x.rank))):
+                y.value = x.value
+    return knightMoves
+
+
+def moveBishop(p, _my_pieces, _op_pieces):
+    p_file = p.file
+    p_rank = p.rank
+    bishopMoves = []
+    # These values will stop checking that direction if they find a like
+    # colored piece
+    up_left = True
+    up_right = True
+    down_left = True
+    down_right = True
+    move_size = 8
+    for m in range(1, move_size):
+        if(up_left is False and up_right is False and down_left is False and down_right is False):
+            break
+        for w in _my_pieces + _op_pieces:
+            if(up_left is True):
+                if(p.rank + m < 9 and chr(ord(p.file) - m) > "`"):
+                    if(w.file == chr(ord(p.file) - m) and w.rank == p.rank + m):
+                        if(p.owner.color == w.owner.color):
+                            up_left = False
+                            w.setAvenge()
+                        else:
+                            bishopMoves.append(Sim(p, chr(ord(p_file) - m), p_rank + m, w.value))
+                            up_left = False
+                else:
+                    up_left = False
+
+            if(up_right is True):
+                if(p.rank + m < 9 and chr(ord(p.file) + m) < "i"):
+                    if(w.file == chr(ord(p.file) + m) and w.rank == p.rank + m):
+                        if(p.owner.color == w.owner.color):
+                            up_right = False
+                            w.setAvenge()
+                        else:
+                            bishopMoves.append(Sim(p, chr(ord(p_file) + m), p_rank + m, w.value))
+                            up_right = False
+                else:
+                    up_right = False
+
+            if(down_left is True):
+                if(p.rank - m > 0 and chr(ord(p.file) - m) > "`"):
+                    if(w.file == chr(ord(p.file) - m) and w.rank == p.rank - m):
+                        if(p.owner.color == w.owner.color):
+                            down_left = False
+                            w.setAvenge()
+                        else:
+                            bishopMoves.append(Sim(p, chr(ord(p_file) - m), p_rank - m, w.value))
+                            down_left = False
+                else:
+                    down_left = False
+
+            if(down_right is True):
+                if(p.rank - m > 0 and chr(ord(p.file) + m) < "i"):
+                    if(w.file == chr(ord(p.file) + m) and w.rank == p.rank - m):
+                        if(p.owner.color == w.owner.color):
+                            down_right = False
+                            w.setAvenge()
+                        else:
+                            bishopMoves.append(Sim(p, chr(ord(p_file) + m), p_rank - m, w.value))
+                            down_right = False
+                else:
+                    down_right = False
+
+        if(up_left is True):
+            bishopMoves.append(Sim(p, chr(ord(p_file) - m), p_rank + m, 0))
+
+        if(up_right is True):
+            bishopMoves.append(Sim(p, chr(ord(p_file) + m), p_rank + m, 0))
+
+        if(down_left is True):
+            bishopMoves.append(Sim(p, chr(ord(p_file) - m), p_rank - m, 0))
+
+        if(down_right is True):
+            bishopMoves.append(Sim(p, chr(ord(p_file) + m), p_rank - m, 0))
+
+    return bishopMoves
+
+
+def moveKing(p, _my_pieces, _op_pieces):
+    p_file = p.file
+    p_rank = p.rank
+    kingMoves = []
+    up_left = True
+    up_right = True
+    down_left = True
+    down_right = True
+    Up = True
+    Down = True
+    Right = True
+    Left = True
+    m = 1
+    for w in _my_pieces + _op_pieces:
+        if(Up is True):
+            if(p.rank + m < 9):
+                if(w.file == p.file and w.rank == p.rank + m):
+                    if(p.owner.color == w.owner.color):
+                        Up = False
+                        w.setAvenge()
+                    else:
+                        kingMoves.append(Sim(p, p_file, p_rank + m, w.value))
+                        Up = False
+            else:
+                Up = False
+
+        if(Down is True):
+            if(p.rank - m > 0):
+                if(w.file == p.file and w.rank == p.rank - m):
+                    if(p.owner.color == w.owner.color):
+                        Down = False
+                        w.setAvenge()
+                    else:
+                        kingMoves.append(Sim(p, p_file, p_rank - m, w.value))
+                        Down = False
+            else:
+                Down = False
+
+        if(Right is True):
+            if(chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank):
+                    if(p.owner.color == w.owner.color):
+                        Right = False
+                        w.setAvenge()
+                    else:
+                        kingMoves.append(Sim(p, chr(ord(p_file) + m), p_rank, w.value))
+                        Right = False
+            else:
+                Right = False
+
+        if(Left is True):
+            if(chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank):
+                    if(p.owner.color == w.owner.color):
+                        Left = False
+                        w.setAvenge()
+                    else:
+                        kingMoves.append(Sim(p, chr(ord(p_file) - m), p_rank, w.value))
+                        Left = False
+            else:
+                Left = False
+
+        if(up_left is True):
+            if(p.rank + m < 9 and chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank + m):
+                    if(p.owner.color == w.owner.color):
+                        up_left = False
+                        w.setAvenge()
+                    else:
+                        kingMoves.append(Sim(p, chr(ord(p_file) - m), p_rank + m, w.value))
+                        up_left = False
+            else:
+                up_left = False
+
+        if(up_right is True):
+            if(p.rank + m < 9 and chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank + m):
+                    if(p.owner.color == w.owner.color):
+                        up_right = False
+                        w.setAvenge()
+                    else:
+                        kingMoves.append(Sim(p, chr(ord(p_file) + m), p_rank + m, w.value))
+                        up_right = False
+            else:
+                up_right = False
+
+        if(down_left is True):
+            if(p.rank - m > 0 and chr(ord(p.file) - m) > "`"):
+                if(w.file == chr(ord(p.file) - m) and w.rank == p.rank - m):
+                    if(p.owner.color == w.owner.color):
+                        down_left = False
+                        w.setAvenge()
+                    else:
+                        kingMoves.append(Sim(p, chr(ord(p_file) - m), p_rank - m, w.value))
+                        down_left = False
+            else:
+                down_left = False
+
+        if(down_right is True):
+            if(p.rank - m > 0 and chr(ord(p.file) + m) < "i"):
+                if(w.file == chr(ord(p.file) + m) and w.rank == p.rank - m):
+                    if(p.owner.color == w.owner.color):
+                        down_right = False
+                        w.setAvenge()
+                    else:
+                        kingMoves.append(Sim(p, chr(ord(p_file) + m), p_rank - m, w.value))
+                        down_right = False
+            else:
+                down_right = False
+
+    if(Up is True):
+        kingMoves.append(Sim(p, p_file, p_rank + m, 0))
+    if(Down is True):
+        kingMoves.append(Sim(p, p_file, p_rank - m, 0))
+    if(Right is True):
+        kingMoves.append(Sim(p, chr(ord(p_file) + m), p_rank, 0))
+    if(Left is True):
+        kingMoves.append(Sim(p, chr(ord(p_file) - m), p_rank, 0))
+    if(up_left is True):
+        kingMoves.append(Sim(p, chr(ord(p_file) - m), p_rank + m, 0))
+    if(up_right is True):
+        kingMoves.append(Sim(p, chr(ord(p_file) + m), p_rank + m, 0))
+    if(down_left is True):
+        kingMoves.append(Sim(p, chr(ord(p_file) - m), p_rank - m, 0))
+    if(down_right is True):
+        kingMoves.append(Sim(p, chr(ord(p_file) + m), p_rank - m, 0))
+
+    return kingMoves
+
+
+def moveQueen(p, _my_pieces, _op_pieces):
+    p_file = p.file
+    p_rank = p.rank
+    queenMoves = []
+    up_left = True
+    up_right = True
+    down_left = True
+    down_right = True
+    Up = True
+    Down = True
+    Right = True
+    Left = True
+    move_size = 8
+    for m in range(1, move_size):
+        if(up_left is False and up_right is False and down_left is False and
+                down_right is False and Up is False and Down is False and
+                Right is False and Left is False):
+            break
+        for w in _my_pieces + _op_pieces:
+            if(Up is True):
+                if(p.rank + m < 9):
+                    if(w.file == p.file and w.rank == p.rank + m):
+                        if(p.owner.color == w.owner.color):
+                            Up = False
+                            w.setAvenge()
+                        else:
+                            queenMoves.append(Sim(p, p_file, p_rank + m, w.value))
+                            Up = False
+                else:
+                    Up = False
+
+            if(Down is True):
+                if(p.rank - m > 0):
+                    if(w.file == p.file and w.rank == p.rank - m):
+                        if(p.owner.color == w.owner.color):
+                            Down = False
+                            w.setAvenge()
+                        else:
+                            queenMoves.append(Sim(p, p_file, p_rank - m, w.value))
+                            Down = False
+                else:
+                    Down = False
+
+            if(Right is True):
+                if(chr(ord(p.file) + m) < "i"):
+                    if(w.file == chr(ord(p.file) + m) and w.rank == p.rank):
+                        if(p.owner.color == w.owner.color):
+                            Right = False
+                            w.setAvenge()
+                        else:
+                            queenMoves.append(Sim(p, chr(ord(p_file) + m), p_rank, w.value))
+                            Right = False
+                else:
+                    Right = False
+
+            if(Left is True):
+                if(chr(ord(p.file) - m) > "`"):
+                    if(w.file == chr(ord(p.file) - m) and w.rank == p.rank):
+                        if(p.owner.color == w.owner.color):
+                            Left = False
+                            w.setAvenge()
+                        else:
+                            queenMoves.append(Sim(p, chr(ord(p_file) - m), p_rank, w.value))
+                            Left = False
+                else:
+                    Left = False
+
+            if(up_left is True):
+                if(p.rank + m < 9 and chr(ord(p.file) - m) > "`"):
+                    if(w.file == chr(ord(p.file) - m) and w.rank == p.rank + m):
+                        if(p.owner.color == w.owner.color):
+                            up_left = False
+                            w.setAvenge()
+                        else:
+                            queenMoves.append(Sim(p, chr(ord(p_file) - m), p_rank + m, w.value))
+                            up_left = False
+                else:
+                    up_left = False
+
+            if(up_right is True):
+                if(p.rank + m < 9 and chr(ord(p.file) + m) < "i"):
+                    if(w.file == chr(ord(p.file) + m) and w.rank == p.rank + m):
+                        if(p.owner.color == w.owner.color):
+                            up_right = False
+                            w.setAvenge()
+                        else:
+                            queenMoves.append(Sim(p, chr(ord(p_file) + m), p_rank + m, w.value))
+                            up_right = False
+                else:
+                    up_right = False
+
+            if(down_left is True):
+                if(p.rank - m > 0 and chr(ord(p.file) - m) > "`"):
+                    if(w.file == chr(ord(p.file) - m) and w.rank == p.rank - m):
+                        if(p.owner.color == w.owner.color):
+                            down_left = False
+                            w.setAvenge()
+                        else:
+                            queenMoves.append(Sim(p, chr(ord(p_file) - m), p_rank - m, w.value))
+                            down_left = False
+                else:
+                    down_left = False
+
+            if(down_right is True):
+                if(p.rank - m > 0 and chr(ord(p.file) + m) < "i"):
+                    if(w.file == chr(ord(p.file) + m) and w.rank == p.rank - m):
+                        if(p.owner.color == w.owner.color):
+                            down_right = False
+                            w.setAvenge()
+                        else:
+                            queenMoves.append(Sim(p, chr(ord(p_file) + m), p_rank - m, w.value))
+                            down_right = False
+                else:
+                    down_right = False
+
+        if(Up is True):
+            queenMoves.append(Sim(p, p_file, p_rank + m, 0))
+        if(Down is True):
+            queenMoves.append(Sim(p, p_file, p_rank - m, 0))
+        if(Right is True):
+            queenMoves.append(Sim(p, chr(ord(p_file) + m), p_rank, 0))
+        if(Left is True):
+            queenMoves.append(Sim(p, chr(ord(p_file) - m), p_rank, 0))
+        if(up_left is True):
+            queenMoves.append(Sim(p, chr(ord(p_file) - m), p_rank + m, 0))
+        if(up_right is True):
+            queenMoves.append(Sim(p, chr(ord(p_file) + m), p_rank + m, 0))
+        if(down_left is True):
+            queenMoves.append(Sim(p, chr(ord(p_file) - m), p_rank - m, 0))
+        if(down_right is True):
+            queenMoves.append(Sim(p, chr(ord(p_file) + m), p_rank - m, 0))
+
+    return queenMoves

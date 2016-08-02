@@ -1,0 +1,53 @@
+{% extends 'showcase/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="ui five column centered grid">
+    <div class="column">
+        <div class="ui card">
+            <a class="image" href="{% url 'showcase:projects' %}">
+                
+            </a>
+            <div class="content">
+                <div class="header">
+                    Projects
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="ui card">
+            <a class="image" href="{% url 'showcase:projects' %}">
+                
+            </a>
+            <div class="content">
+                <div class="header">
+                    Interests
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <a href="{% url 'showcase:projects' %}">
+            <div class="ui card">
+                <img src="{% static 'showcase/img/document.png' %}">
+                <div class="content">
+                    <div class="header">
+                        Resume
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+<ul>
+    <li><a href="{% url 'showcase:resume' %}">Resume</a></li>
+    <li><a href="{% url 'showcase:projects' %}">Projects</a></li>
+    <li><a href="{% url 'showcase:concepts' %}">Fundamentals</a></li>
+    <li><a href="{% url 'showcase:interests' %}">Interests</a></li>
+</ul>
+<button class="ui linkedin button">
+    <i class="linkedin icon"></i>
+    LinkedIn
+</button>
+{% endblock %}

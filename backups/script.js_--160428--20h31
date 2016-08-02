@@ -1,0 +1,18 @@
+$(document).ready(function() {
+    $('#projects').hover(
+        function() {
+            $('#projects').shape('flip over').shape('repaint');
+        });
+    $('#concepts').hover(
+        function() {
+            $('#concepts').shape('flip over').shape('repaint');
+        });
+    $('#resume').hover(
+        function() {
+            $('#resume').shape('flip over');
+        });
+    $('#interests').hover(
+        function() {
+            $('#interests').shape('flip over');
+        });
+});

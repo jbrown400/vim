@@ -1,0 +1,14 @@
+import java.util.regex.*;
+import grammar.*;
+
+public class progparser{
+    public static void main(String[] args){
+        
+        System.out.println("Hello, world!");
+        test();
+    }
+
+    public static void test(){
+        System.out.println("Hi");
+    }
+}

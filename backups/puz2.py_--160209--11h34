@@ -1,0 +1,213 @@
+#Justin Brown
+#A. I. Puzzle 2 (Spring 2016)
+#Color Connect
+
+'''This program will take in a file containing an integer defining the size, an integer defining the 
+	number of colors, and a map. The goal of the program is to "connect" each color on the map.
+	The program will then create a data structure to house the necessary data and run the 
+	Breadth-First-Search algorithm (which will utilize the data structure) on the map. The result will be 
+	a new map with each color connected.'''
+
+import sys                  #used for passing arguements
+import time                 #used for keepying track of time
+from itertools import count
+
+class Node(object):
+	num_nodes = 1
+	def __init__(self, current_state, start, end, actions):
+		self.current_state = current_state
+		self.start = start
+		self.end =  end
+		self.actions = actions
+		Node.num_nodes += 1
+
+	#Pre: None
+	#Post: Adds updated start coordinates for a new Node
+	def add_start(self, c, x, y):
+		self.start[c] = [x, y]
+	#Pre: None
+	#Post: Adds ending coordinates for a Node
+	def add_end(self, c, x, y, f):
+		self.end[c] = [x, y, f]
+	def copy(other):
+		start = {}
+		end = {}
+		for x in other.start:
+			start[x] = other.start[x][:]
+		for x in other.end:
+			end[x] = other.end[x][:]
+
+		return Node([x[:] for x in other.current_state], start, end, [x[:] for x in other.actions])
+
+#Iterative Deepening Depth-Frist Tree Search
+def id_dfts(root):
+	l = 0
+	while 1:
+		print("***", l, "***")
+		abc = Node.copy(root)
+		'''
+		for row in range(size):
+			for col in range(size):
+				print(abc.current_state[row][col], end='')
+			print()
+		print()
+		'''
+		if(dls(abc, 0, l)):
+			break
+		else:
+			l += 1
+		if(l > 1000000):   #If, for some reason it's caught in an infinite loop, it'll stop
+			break
+
+#Depth-Limited Search
+def dls(node, current_level, l):
+	'''
+	for row in range(size):
+		for col in range(size):
+			print(node.current_state[row][col], end='')
+		print()
+	print()
+	'''
+	if(current_level > l):
+		return False
+	else:
+		for color in sorted(node.start):
+			x = node.start[color][0]          #Sets x coordinate of current color
+			y = node.start[color][1]          #Sets y coordinate of current color
+			#Check if goal state
+			if x == node.end[color][0] and y == node.end[color][1]:
+				node.end[color][2] = "True"
+				if not "False" in [x for v in node.end.values() for x in v]:
+					print("Number of nodes: ", Node.num_nodes)
+					output(node, l)
+					return True
+				continue
+				
+				#Check if the move will be valid. If it is, copy the node, make the changes, function call and continue on searching
+			if (x + 1 in range(size)) and (node.current_state[x + 1][y] == color or node.current_state[x + 1][y] == 'e'):
+				#Create a copy of the node and make the necessary changes
+				tmp = Node.copy(node)
+				tmp.start[color][0] += 1
+				tmp.current_state[x][y] = color
+				tmp.actions.append([color, y, x + 1])
+				current_level += 1
+				'''
+				for row in range(size):
+					for col in range(size):
+						print(tmp.current_state[row][col], end='')
+					print()
+				print()
+				'''
+				#Start another recursive iteration
+				if(dls(tmp, current_level, l)):
+					return True
+				current_level -= 1
+
+
+			if x == node.end[color][0] and y == node.end[color][1]:
+				continue
+
+			#Up
+			if (x - 1 in range(size)) and (node.current_state[x - 1][y] == color or node.current_state[x - 1][y] == 'e'):
+				tmp = Node.copy(node)
+				tmp.start[color][0] -= 1
+				tmp.current_state[x][y] = color
+				tmp.actions.append([color, y, x - 1])
+				current_level += 1
+				'''
+				for row in range(size):
+					for col in range(size):
+						print(tmp.current_state[row][col], end='')
+					print()
+				print()
+				'''
+				if(dls(tmp, current_level, l)):
+					return True
+				current_level -= 1
+
+			if x == node.end[color][0] and y == node.end[color][1]:
+				continue
+
+			#Right
+			if (y + 1 in range(size)) and (node.current_state[x][y + 1] == color or node.current_state[x][y + 1] == 'e'):
+				tmp = Node.copy(node)
+				tmp.start[color][1] += 1
+				tmp.current_state[x][y] = color
+				tmp.actions.append([color, y + 1, x])
+				current_level += 1
+				'''
+				for row in range(size):
+					for col in range(size):
+						print(tmp.current_state[row][col], end='')
+					print()
+				print()
+				'''
+				if(dls(tmp, current_level, l)):
+					return True
+				current_level -= 1
+
+			if x == node.end[color][0] and y == node.end[color][1]:
+				continue
+
+			#Left
+			if (y - 1 in range(size)) and (node.current_state[x][y - 1] == color or node.current_state[x][y - 1] == 'e'):
+				tmp = Node.copy(node)
+				tmp.start[color][1] -= 1
+				tmp.current_state[x][y] = color
+				tmp.actions.append([color, y - 1, x])
+				current_level += 1
+				'''
+				for row in range(size):
+					for col in range(size):
+						print(tmp.current_state[row][col], end='')
+					print()
+				print()
+				'''
+				if(dls(tmp, current_level, l)):
+					return True
+				current_level -= 1
+			return False
+		return False
+
+#Pre: Algorithm has ran an results have been gathered
+#Post: Results have been put into required format and are output to the screen and appended to a file
+def output(node, l):
+	tf = time.clock()
+	total_time = int((tf -ti) * 1000000)
+	#WRITE ALL THE THINGS!
+	print(total_time)
+	print(l)
+	for item in node.actions:
+		print(item[0] + ' ' + ' '.join(map(str, item[1:])) + ', ', end='')
+	
+	for row in range(size):
+		print()
+		for col in range(size):
+			print(node.current_state[row][col], end='')
+
+
+'''Main Body'''
+f = open(sys.argv[1], "r")
+ti = time.clock()
+
+contraints = [int(s) for s in f.readline().split() if s.isdigit()]
+size = contraints[0]
+number_of_colors = contraints[1]
+carte = [[None for x in range(size)] for c in range(size)]  #carte is French for map
+
+root = Node(carte, {}, {}, [])
+
+#Read in map and set carte, starting points and ending points
+for row in range(size):
+	l = f.readline()
+	for col in range(size):
+		if(l[2*col] != ' '):
+			carte[row][col] = l[2*col]
+			if((l[2*col] != 'e') and not (l[2*col] in root.start.keys())):
+				root.add_start(l[2*col], row, col)
+			elif((l[2*col] != 'e') and (l[2*col] in root.start.keys())):
+				root.add_end(l[2*col], row, col, "False")
+
+id_dfts(root)
+
+f.close()

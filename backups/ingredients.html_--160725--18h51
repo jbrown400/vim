@@ -1,0 +1,55 @@
+<ion-view view-title="Ingredients">
+    <ion-content>
+        <ion-list>
+            <div ng-repeat="ing in burritos_ing">
+                <div class="card">
+                    <ion-checkbox>
+                        <div class="item">
+                            {{ ing.title }}
+                        </div>
+                    </ion-checkbox>
+                </div>
+            </div>
+            <!--
+            <div class="positive card">
+                <ion-checkbox>
+                    <div class="item">
+                        Tortillas
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Beef
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Beans
+                    </div>
+                </ion-checkbox>
+            </div>
+            <div class="card">
+                <ion-checkbox>
+                    <div class="item">
+                        Cheese
+                    </div>
+                </ion-checkbox>
+            -->
+                <!--
+                <ion-item>
+                    <ion-option-button class="icon ion-trash-a">
+                        
+                    </ion-option-button>
+                </ion-item>
+                -->
+            </div>
+        </ion-list>
+        <div id="sendButtonContainer" ng-controller="PopupCtrl">
+            <button class="button button-large" id="sendToCart" ng-click="showConfirm()">Send To Cart</button> 
+        </div>
+    </ion-content>
+</ion-view>

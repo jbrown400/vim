@@ -1,0 +1,55 @@
+/*
+ * Houses the Piece class
+ */
+#ifndef PIECE_H
+#define PIECE_H
+
+#include <string>
+using namespace std;
+
+class Piece {
+
+    private:
+        string o_color = "";
+        string o_type = "";
+        string o_file = "";
+        int o_rank = 0;
+
+    public:
+        Piece(string color, string type, string file, int rank);
+        ~Piece();
+
+
+};
+
+//Piece constructor
+Piece::Piece(string color, string type, string file, int rank) {
+    this -> o_color = color;
+    this -> o_type = type;
+    this -> o_file = file;
+    this -> o_rank = rank;
+}
+
+//Piece destructor
+Piece::~Piece() {
+    cout << "Piece destroyed." << endl;
+}
+
+//Getters and setters
+string Piece::GetColor() {
+    return this -> o_color;
+}
+
+string Piece::GetType() {
+    return this ->o_type;
+}
+
+string Piece::GetFile() {
+    return this -> o_file;
+}
+
+int Piece::GetRank() {
+    return this -> o_rank;
+}
+
+#endif

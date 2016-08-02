@@ -1,0 +1,244 @@
+# This is where you build your AI for the Chess game.
+
+from joueur.base_ai import BaseAI
+from games.chess.generation import generateMoves, getKing, copy_pieces
+from games.chess.minimax import MiniMax
+# import yappi
+import random
+
+
+class AI(BaseAI):
+    """ The basic AI functions that are the same between games. """
+    promotion_list = ["Rook", "Knight", "Bishop", "Queen"]
+    num_moves = 0
+    white_unicode_dictionary = {
+            "Pawn": "\u265F",
+            "Rook": "\u265C",
+            "Knight": "\u265E",
+            "Bishop": "\u265D",
+            "Queen": "\u265B",
+            "King": "\u265A",
+    }
+    black_unicode_dictionary = {
+            "Pawn": "\u2659",
+            "Rook": "\u2656",
+            "Knight": "\u2658",
+            "Bishop": "\u2657",
+            "Queen": "\u2655",
+            "King": "\u2654",
+    }
+
+    def get_name(self):
+        """ This is the name you send to the server so your AI will control the player named this string.
+
+        Returns
+            str: The name of your Player.
+        """
+
+        return "Trap Queen"
+
+    def start(self):
+        """ This is called once the game starts and your AI knows its playerID and game. You can initialize your AI here.
+        """
+        # When the game starts, assign point values to pieces
+        point_dictionary = {
+                "Pawn": 1,
+                "Knight": 3,
+                "Bishop": 3,
+                "Rook": 5,
+                "Queen": 9,
+                "King": 12,
+        }
+        for x in self.player.pieces:
+            x.setPieceValue(point_dictionary[x.type])
+        for y in self.player.other_player.pieces:
+            y.setPieceValue(point_dictionary[y.type])
+
+        # yappi.start(True)
+
+    def game_updated(self):
+        """ This is called every time the game's state updates, so if you are tracking anything you can update it here.
+        """
+        # replace with your game updated logic
+        # AI.num_moves += 1
+
+    def end(self, won, reason):
+        """ This is called when the game ends, you can clean up your data and dump files here if need be.
+
+        Args:
+            won (bool): True means you won, False means you lost.
+            reason (str): The human readable string explaining why you won or lost.
+        """
+        # Stop yappi and convert statistical data to pstats
+        # yappi.stop()
+        # stats = yappi.get_func_stats()
+        # stats.save('prof.callgrind', type='callgrind')
+        # yappi.convert2pstats(y)
+
+    def run_turn(self):
+        """ This is called every time it is this AI.player's turn.
+
+        Returns:
+            bool: Represents if you want to end your turn. True means end your turn, False means to keep your turn going and re-call this function.
+        """
+
+        for f in range(9, -2, -1):  # iterate through the file in reverse order
+            output = ""
+            if f == 9 or f == 0:  # then the top or bottom of the board
+                output = "   +------------------------+"
+            elif f == -1:  # then show the ranks
+                output = "     a  b  c  d  e  f  g  h"
+            else:  # board
+                output = " " + str(f) + " |"
+                # fill in all the ranks with pieces at the current rank
+                for rankOffset in range(0, 8):
+                    r = chr(ord("a") + rankOffset) # start at a, with with rank offset increasing the char
+                    currentPiece = None
+                    for piece in self.game.pieces:
+                        if piece.rank == f and piece.file == r:  # then we found the piece at (rank, file)
+                            currentPiece = piece
+                            break
+
+                    code = "."  # default "no piece"
+                    if currentPiece:
+                        if currentPiece.owner.id == "1":  # the second player (black) is lower case. Otherwise it's upppercase already
+                            code = AI.black_unicode_dictionary[currentPiece.type]
+                        else:
+                            code = AI.white_unicode_dictionary[currentPiece.type]
+
+                    output += " " + code + " "
+
+                output += "|"
+
+            print(output)
+
+
+        # 2) print the opponent's last move to the console
+        if len(self.game.moves) > 0:
+            print("Opponent's Last Move: '" + self.game.moves[-1].san + "'")
+        # 3) print how much time remaining this AI has to calculate moves
+        print("Time Remaining: " + str(self.player.time_remaining) + " ns")
+
+        my_pieces = copy_pieces(self.player.pieces)
+        op_pieces = copy_pieces(self.player.other_player.pieces)
+        # set avenge variable of all pieces to false
+        for x in my_pieces + op_pieces:
+            x.undoAvenge()
+        king = getKing(my_pieces)
+
+        # If in check
+        if(self.player.in_check is True):
+            possibleMoves = generateMoves(self, my_pieces, op_pieces)
+            check_moves = [x for x in possibleMoves if x.piece.type == "King"]
+            # Generate all moves opponent can make
+            # Using the same move generation function, just flipping the lists
+            # of pieces that are passed
+            opponentMoves = generateMoves(self, op_pieces, my_pieces)
+            # Identify piece putting king in check
+            for x in opponentMoves:
+                if(x.sim_file == king.file and x.sim_rank == king.rank):
+                    attackingPiece = x.piece
+            # See if any pieces can attack the opponents attacking piece
+            canAttack = False
+            myAttackMoves = []
+            for y in possibleMoves:
+                if(y.sim_file == attackingPiece.file and y.sim_rank == attackingPiece.rank):
+                    # One of my pieces can attack the other piece
+                    myAttackMoves.append(y)
+                    canAttack = True
+            if(canAttack is True):
+                check_moves.extend(myAttackMoves)
+            # To try and block the piece, have to figure out from which
+            # direction the king is being attacked.
+            blockMoves = AI.findAttackDirection(king, attackingPiece)
+            for z in possibleMoves:
+                for x in blockMoves:
+                    # If the ranks and files match up
+                    if(z.sim_file == x[0] and z.sim_rank == x[1]):
+                        check_moves.append(z)
+            # Now find the highest value move
+            val = -1
+            my_move = None
+            for m in check_moves:
+                if(m.value > val):
+                    val = m.value
+                    my_move = m
+            AI.makeMove(my_move)
+        # else not in check
+        else:
+            my_move = MiniMax.mini_max(self)
+
+            AI.makeMove(my_move)
+
+        return True  # to signify we are done with our turn.
+
+
+    # Pre: A move must be possible
+    # Post: Makes a move
+    def makeMove(_my_move):
+        the_piece = _my_move.piece
+        # Print the output in the desired format
+        print(the_piece.type, "at", the_piece.file, the_piece.rank)
+        # Print the chosen move
+        print("The move:", _my_move.sim_file, _my_move.sim_rank, "with a value of:", _my_move.value)
+        promote = random.choice(AI.promotion_list)
+        the_piece.move(_my_move.sim_file, _my_move.sim_rank, promote)
+
+
+    # Pre: There is a piece trying to attack the king and I can only block it
+    # Post: Returns a range in which I should move a piece to block the check
+    def findAttackDirection(king, attacker):
+        # Using the rank and file as coordinates, you can determine which 
+        # direction the king is being attacked from
+        block_spaces = []
+
+        if(king.rank < attacker.rank and king.file == attacker.file):
+            # Attacked from "above"
+            for x in range(king.rank + 1, attacker.rank):
+                block_spaces.append([king.file, x])
+            return block_spaces
+
+        elif(king.rank < attacker.rank and king.file < attacker.file):
+            # This updates both the rank and file. Because, on a square board,
+            # the x and y distances will be equal, we can change the files based
+            # on how far we are along in the range between the ranks
+            # Attacked from above and right
+            for x in range(king.rank + 1, attacker.rank):
+                block_spaces.append([chr(ord(king.file) + abs(king.rank - x)), x])
+            return block_spaces
+
+        elif(king.rank == attacker.rank and king.file < attacker.file):
+            # Attacked from right
+            for x in range(ord(king.file) + 1, ord(attacker.file)):
+                block_spaces.append([chr(x), king.rank])
+            return block_spaces
+
+        elif(king.rank > attacker.rank and king.file < attacker.file):
+            # Attacked from below and right
+            for x in range(attacker.rank, king.rank):
+                block_spaces.append([chr(ord(king.file) - abs(king.rank - x)), x])
+            return block_spaces
+
+        elif(king.rank > attacker.rank and king.file == attacker.file):
+            # Attacked from below
+            for x in range(attacker.rank, king.rank):
+                block_spaces.append([king.file, x])
+            return block_spaces
+
+        elif(king.rank > attacker.rank and king.file > attacker.file):
+            # Attacked from below and left
+            for x in range(attacker.rank, king.rank):
+                block_spaces.append([chr(ord(king.file) - abs(king.rank - x)), x])
+            return block_spaces
+
+        elif(king.rank == attacker.rank and king.file > attacker.file):
+            # Attacked from left
+            for x in range(ord(attacker.file), ord(king.file)):
+                block_spaces.append([chr(x), king.rank])
+            return block_spaces
+
+        elif(king.rank < attacker.rank and king.file > attacker.file):
+            # Attacked from above and left
+            for x in range(king.rank + 1, attacker.rank):
+                block_spaces.append([chr(ord(king.file) - abs(king.rank - x)), x])
+            return block_spaces

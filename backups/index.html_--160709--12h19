@@ -1,0 +1,19 @@
+<!Doctype html>
+<html ng-app="githubViewer">
+    <head>
+        <title>Learning Angular</title>
+        <script src="js/angular.min.js"></script>
+        <script src="js/script.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+    <body ng-controller="MainController">
+        <h1>{{ message }}</h1>
+        <div>
+            <div>Name: {{user.name}}</div>
+            <div>Location: {{user.location}}</div>
+            <div>
+                <img ng-src="{{user.avatar_url}}" title="{{user.name}}">
+            </div>
+        </div>
+    </body>
+</html>

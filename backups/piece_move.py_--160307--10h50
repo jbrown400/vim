@@ -1,0 +1,39 @@
+# This file houses all the logic for the movement of each piece
+
+from joueur.base_ai import BaseAI
+
+def movePawn(p, _my_pieces, _op_pieces):
+    pawnMoves = []
+    found = False
+
+    if(p.owner.color == "Black"):
+        v = -1
+    elif(p.owner.color == "White"):
+        v = 1
+    # Check attack
+    if(any((chr(ord(p.file) + 1) + str(p.rank + v)) == (x.file + str(x.rank)) for x in _op_pieces)):
+        pawnMoves.append([p, chr(ord(p.file) + 1), p.rank + v])
+    if(any((chr(ord(p.file) - 1) + str(p.rank + v)) == (x.file + str(x.rank)) for x in _op_pieces)):
+        pawnMoves.append([p, chr(ord(p.file) - 1), p.rank + v])
+    # Check for moves
+    if(p.has_moved is False):
+        # 2 spaces if haven't moved yet
+        move_size = 2
+    else:
+        move_size = 1
+    # Prevent moving onto another pawn
+    for m in range(1, move_size + 1):
+        for x in _my_pieces:
+            if(x.file == p.file and x.rank == p.rank + (m*v)):
+                found = True
+                break
+        for y in _op_pieces:
+            if(y.file == p.file and y.rank == p.rank + (m*v)):
+                found = True
+                break
+        if(found is True):
+            break
+        else:
+            pawnMoves.append([p, p.file, p.rank + (m*v)])
+
+    return pawnMoves

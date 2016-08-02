@@ -1,0 +1,160 @@
+/* Empty. Add your own CSS if you like */
+.menu-page {
+	background-color: white;
+}
+
+.grid{
+	margin: 0 auto;
+	max-width: 1200px;
+	max-height: 1080px;
+	width: 100%;
+}
+
+.col-1{
+	width: 8.33%;
+}
+
+.col-2{
+	width: 16.66%;
+}
+
+.col-3{
+	width: 300px;
+		padding-left: 2px;
+}
+
+.col-4{
+	width: 25%;
+}
+
+.col-5{
+	width: 41.66%;
+}
+
+.col-6 {
+  width: 50%;
+}
+
+.col-7 {
+  width: 58.33%;
+}
+
+.col-8 {
+  width: 66.66%;
+}
+
+.col-9 {
+  width: 75%;
+}
+
+.col-10 {
+  width: 83.33%;
+}
+
+.col-11 {
+  width: 91.66%;
+}
+
+.col-12 {
+	width: 100%;
+}
+
+.row1{
+	width: 100%;
+	padding: 1px;
+	display: flex;
+}
+
+.nachos {
+	background-image: url(http://www.myiguanasranas.com/wp-content/uploads/nachos-300x300.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.burritos {
+	background-image: url(http://a.ctimg.net/AL997T1PRrWtHCaz0EqIHQ/bulk-breakfast-burritos.300x300.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.enchiladas {
+	color: white;
+	background-image: url(http://cdn.iowagirleats.com/wp-content/uploads/2015/08/Cheesy-Chicken-Enchiladas-with-Homemade-Gluten-Free-Enchilada-Sauce-iowagirleats-01-300x300.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.tacos {
+	background-image: url(http://cf.diethood.com/wp-content/uploads/2015/02/Huevos-Rancheros-Tacos-300x300.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.quesadillas {
+	background-image: url(http://www.couponclippingcook.com/wp-content/uploads/2014/08/15-Chicken-Fajita-Quesadilla-300x300.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.fajitas {
+	background-image: url(http://cdn-image.myrecipes.com/sites/default/files/styles/300x300/public/image/recipes/ck/00/06/beef-fajitas-ck-222256-x.jpg?itok=O29WDAs5);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+
+
+
+
+.asian {
+	background-image: url(https://res.cloudinary.com/sagacity/image/upload/c_crop,h_600,w_600,x_0,y_150/c_limit,f_auto,fl_lossy,q_80,w_400/asian_family_shot_rgb_s7nclq.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.mexican {
+	background-image: url(http://applepins.com/wp-content/uploads/2012/09/Healthy-mexican-food-recipes.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.greek {
+	background-image: url(http://gogreekeats.com/wp-content/uploads/2015/11/Greek_Eats_gallery_06-400x400.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.american {
+	background-image: url(http://www.visitredding.com/images/pagefeaturedimages/American%20Food%20400%20x%20400.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.italian {
+	background-image: url(https://images.blogthings.com/theitalianfoodtest/italian-food-1.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.ethiopian {
+	background-image: url(http://thehowmade.com/images/7/f/lucy-making-ethiopian-food-look-goo_1.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+/*
+h3 {
+	color: white;
+	display: flex;
+	font-size: 130%;
+	font-weight: bold;
+}
+*/
+#sendButtonContainer {
+    text-align: center;
+}
+
+#sendToCart {
+    background-color: #F47321;
+    color: #FFFFFF;
+    width: 80%;
+}

@@ -1,0 +1,19 @@
+<ion-view view-title="Ingredients">
+    <ion-content>
+        <ion-list>
+            <div ng-repeat="ing in burritos_ing">
+                <div class="card">
+                    <ion-checkbox>
+                        <div class="item">
+                            {{ ing.title }}
+                        </div>
+                    </ion-checkbox>
+                </div>
+            </div>
+            </div>
+        </ion-list>
+        <div id="sendButtonContainer" ng-controller="PopupCtrl">
+            <button class="button button-large" id="sendToCart" ng-click="showConfirm()">Send To Cart</button> 
+        </div>
+    </ion-content>
+</ion-view>

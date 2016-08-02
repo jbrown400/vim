@@ -1,0 +1,36 @@
+Merge branch 'master' into fb-userexperience
+
+# Conflicts:
+#	browse/templates/browse/index.html
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch fb-userexperience
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	new file:   browse/get_utils.py
+#	deleted:    browse/static/browse/css/base.scss
+#	modified:   browse/static/browse/js/index.js
+#	modified:   browse/static/browse/js/main.js
+#	new file:   browse/static/browse/scss/base.scss
+#	new file:   browse/static/browse/scss/reviews.scss
+#	modified:   browse/templates/browse/base.html
+#	modified:   browse/templates/browse/index.html
+#	modified:   browse/templates/browse/professor.html
+#	modified:   browse/templates/browse/professors.html
+#	modified:   browse/templates/browse/review.html
+#	modified:   browse/templates/browse/reviews.html
+#	modified:   browse/templates/browse/school.html
+#	modified:   browse/templates/browse/schools.html
+#	new file:   browse/templates/browse/tags/review_card.html
+#	new file:   browse/templatetags/cards.py
+#	modified:   browse/tests.py
+#	modified:   browse/views.py
+#

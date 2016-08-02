@@ -1,0 +1,2 @@
+<h2> Interests </h2>
+<a href="{% url 'justin' %}">Home</a>

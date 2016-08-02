@@ -1,0 +1,47 @@
+/* Empty. Add your own CSS if you like */
+a {
+    text-decoration: none;
+}
+.menu-page {
+	background-color: white;
+}
+
+
+.enchiladas {
+	color: white;
+	background-image: url(http://cdn.iowagirleats.com/wp-content/uploads/2015/08/Cheesy-Chicken-Enchiladas-with-Homemade-Gluten-Free-Enchilada-Sauce-iowagirleats-01-300x300.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.tacos {
+	background-image: url(http://cf.diethood.com/wp-content/uploads/2015/02/Huevos-Rancheros-Tacos-300x300.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.quesadillas {
+	background-image: url(http://www.couponclippingcook.com/wp-content/uploads/2014/08/15-Chicken-Fajita-Quesadilla-300x300.jpg);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+.fajitas {
+	background-image: url(http://cdn-image.myrecipes.com/sites/default/files/styles/300x300/public/image/recipes/ck/00/06/beef-fajitas-ck-222256-x.jpg?itok=O29WDAs5);
+	height: 250px;
+	text-shadow: 2px 2px #3399ff;
+}
+
+#sendButtonContainer {
+    text-align: center;
+}
+
+#sendToCart {
+    background-color: #F47321;
+    color: #FFFFFF;
+    width: 80%;
+}
+
+.weeklyCards {
+    text-align: center;
+}

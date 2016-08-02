@@ -1,0 +1,10 @@
+public class grammar {
+    public static void success(){
+        System.out.println("This is in the grammar file.");
+    }
+
+    public static void fail(){
+        System.out.println("INCORRECT!");
+    }
+}
+

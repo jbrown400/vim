@@ -1,0 +1,5 @@
+l = [0, 1, 2]
+m = [3, 4, 5]
+
+for x in l and m:
+    print(x)

@@ -1,0 +1,28 @@
+# Unit Tests
+
+import piece_move
+
+
+def testPawn():
+    pass
+
+
+def testRook():
+    pass
+
+
+def testKnight():
+    pass
+
+
+def testBishop():
+    pass
+
+
+def testQueen():
+    pass
+
+
+def testKing():
+    pass
+

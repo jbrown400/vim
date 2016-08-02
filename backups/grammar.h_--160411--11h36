@@ -1,0 +1,436 @@
+#ifndef GRAMMAR_H
+#define GRAMMAR_H
+
+#include <stdlib.h>
+#include <string>
+#include <regex>
+using namespace std;
+
+
+/* Regular Expressions */
+
+// Integers are non-empty sequences of digits optionally preceded with either a ‘+’ or ‘-’ sign
+std::regex REG_INTEGER("(\\+|-)?[0-9]+");
+
+// Decimal numbers are Integers followed by a ‘.’, followed by a non-empty sequence of digits.
+std::regex REG_DECIMAL("((\\+|-)?[0-9]+)\\.[0-9]+");
+
+// Strings are any non-space sequences of characters enclosed in “”. e.g. “hello” “abc123”.
+std::regex REG_STRING("\"[a-zA-Z0-9]+\"");
+
+// Keywords are the following strings: <=, +, -, *, /, or, and, ~, (, ), lt, gt, eq , <, >, !, print, inc, ret, if, fi, else, while, elihw, defprog, blip, blorp.
+std::regex REG_KEYWORD ("(is|\\+|-|\\*|/|or|and|~|\\(|\\)|lt|gt|eq|\\<|\\>|\\!|print|inc|ret|if|fi|else|while|elihw|defprog|blip|blorp)");
+
+//Identifiers are a sequences of digits or letters. The first character must be a letter, and an identifier cannot be a Keyword.
+std::regex REG_IDENTIFIER ("[a-zA-Z]{1}[a-zA-Z0-9]*");
+
+
+//Relation := lt | gt | eq
+std::regex REG_RELATION("(<|>|eq)");
+
+//AddOperator :=   + | - | or
+std::regex REG_ADD_OPERATOR("(\\+|-|or)");
+
+// MulOperator :=   * | / | and
+std::regex REG_MUL_OPERATOR("(\\*|/|and)");
+
+/* token variable definition */
+string TOKEN;
+
+
+/* Function Declarations */
+string getToken();
+void success();
+void fail();
+void begin_parsing(string s);
+void routine_declaration();
+void statement_sequence();
+void statement();
+void param_sequence();
+void expression();
+void simple_expression();
+void term();
+void factor();
+void assignment();
+void inc_statement();
+void if_statement();
+void loop_statement();
+void print_statement();
+void return_statement();
+
+bool is_integer(string s);
+bool is_decimal(string s);
+bool is_string(string s);
+bool is_keyword(string s);
+bool is_identifier(string s);
+bool is_relation(string s);
+bool is_add_operator(string s);
+bool is_mul_operator(string s);
+bool is_first(string s);
+
+
+/* Function Definitions */
+string getToken(){
+    cin >> TOKEN;
+    //cout << TOKEN << endl;
+    return TOKEN;
+}
+
+void success(){
+    cout << "CORRECT!" << endl;
+    return;
+}
+
+void fail(){
+    cout << "INCORRECT!" << endl;
+    exit(0);
+    return;
+}
+
+void begin_parsing(){
+    routine_declaration();
+    return;
+}
+
+void routine_declaration(){
+    getToken();
+    if( TOKEN == "defprog" ){
+       getToken();
+       if( is_identifier(TOKEN) ){
+           getToken();
+           if( TOKEN == "<"){
+               getToken();
+               if( is_identifier(TOKEN) ){
+                    param_sequence();
+               }
+               if( TOKEN == ">" ){
+                   getToken();
+                   if( TOKEN == "blip" ){
+                       getToken();
+                       statement_sequence();
+                       if( TOKEN == "blorp" ){
+                           success();
+                       }
+                       else{
+                           fail();
+                       }
+                   }
+                   else{
+                       fail();
+                   }
+               }
+               else{
+                   fail();
+               }
+           }
+           else {
+               fail();
+           }
+       }
+       else{
+           fail();
+       }
+    }
+    else{
+        fail();
+    }
+}
+
+void param_sequence(){
+    getToken();
+    while( TOKEN != ">" ){
+        if( TOKEN == "," ){
+            getToken();
+            if( is_identifier( TOKEN ) ){
+                getToken();
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+
+}
+
+void statement_sequence(){
+    statement();
+    while(is_first(TOKEN)){
+        statement();
+    }
+
+    return;
+}
+
+void statement(){
+    if(is_identifier(TOKEN)){
+        assignment();
+    }
+    else if(TOKEN == "if"){
+        if_statement();
+    }
+    else if(TOKEN == "while"){
+        loop_statement();
+    }
+    else if(TOKEN == "inc"){
+        inc_statement();
+    }
+    else if(TOKEN == "print"){
+        print_statement();
+    }
+    else if(TOKEN == "ret"){
+        return_statement();
+    }
+    return;
+}
+
+void assignment(){
+    if(is_identifier(TOKEN)){
+        getToken();
+        if(TOKEN == "<="){
+            getToken();
+            expression();
+            if(TOKEN == "!"){
+                getToken();
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+    else{
+        fail();
+    }
+
+}
+
+void if_statement(){
+    if(TOKEN == "if"){
+        getToken();
+        if(TOKEN == "<"){
+            getToken();
+            expression();
+            if(TOKEN == ">"){
+                getToken();
+                statement_sequence();
+                if(TOKEN == "else"){
+                    getToken();
+                    statement_sequence();
+                }
+                if(TOKEN == "fi"){
+                    getToken();
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+    else{
+        fail();
+    }
+}
+
+void loop_statement(){
+    if(TOKEN == "while"){
+        getToken();
+        if(TOKEN == "<"){
+            getToken();
+            expression();
+            if(TOKEN == ">"){
+                getToken();
+                statement_sequence();
+                if(TOKEN == "elihw"){
+                    getToken();
+                }
+                else{
+                    fail();
+                }
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+    else{
+        fail();
+    }
+}
+
+void print_statement(){
+    if(TOKEN == "print"){
+        getToken();
+        if(is_identifier(TOKEN)){
+            getToken();
+            if(TOKEN == "!"){
+                getToken();
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+    else{
+        fail();
+    }
+}
+
+void inc_statement(){
+    if(TOKEN == "inc"){
+        getToken();
+        if(is_identifier(TOKEN)){
+            getToken();
+            if(TOKEN == "!"){
+                getToken();
+            }
+            else{
+                fail();
+            }
+        }
+        else{
+            fail();
+        }
+    }
+    else{
+        fail();
+    }
+
+}
+
+void return_statement(){
+    if(TOKEN == "ret"){
+        getToken();
+        if(is_identifier(TOKEN)){
+            getToken();
+        }
+        else{
+            fail();
+        }
+    }
+    else{
+        fail();
+    }
+}
+
+void expression(){
+    simple_expression();
+    if(is_relation(TOKEN)){
+        getToken();
+        simple_expression();
+    }
+    return;
+}
+
+void simple_expression(){
+    term();
+    while(is_add_operator(TOKEN)){
+        getToken();
+        term();
+    }
+    return;
+}
+
+void term(){
+    factor();
+    while(is_mul_operator(TOKEN)){
+        getToken();
+        factor();
+    }
+    return;
+}
+
+void factor(){
+    if(is_integer(TOKEN)){
+        getToken();
+    }
+    else if(is_decimal(TOKEN)){
+        getToken();
+    }
+    else if(is_string(TOKEN)){
+        getToken();
+    }
+    else if(is_identifier(TOKEN)){
+        getToken();
+    }
+    else if(TOKEN == "("){
+        getToken();
+        expression();
+        if(TOKEN == ")"){
+            getToken();
+        }
+        else{
+            fail();
+        }
+    }
+    else if(TOKEN == "~"){
+        getToken();
+        factor();
+    }
+    else{
+        fail();
+    }
+    return;
+}
+
+bool is_first(string s){
+    if( is_identifier(TOKEN) || TOKEN == "if" || TOKEN == "while" ||
+            TOKEN == "print" || TOKEN == "inc" || TOKEN == "ret"){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool is_integer(string s){
+    return std::regex_match(s, REG_INTEGER);
+}
+
+bool is_decimal(string s){
+    return std::regex_match(s, REG_DECIMAL);
+}
+
+bool is_string(string s){
+    return std::regex_match(s, REG_STRING);
+}
+
+bool is_keyword(string s){
+    return std::regex_match(s, REG_KEYWORD);
+}
+
+bool is_identifier(string s){
+    return regex_match(s, REG_IDENTIFIER) && !(is_keyword(s));
+}
+
+bool is_relation(string s){
+    return(s == "lt" || s == "gt" || s == "eq");
+}
+
+bool is_add_operator(string s){
+    return (s == "+" || s == "-" || s == "or");
+}
+
+bool is_mul_operator(string s){
+    return (s == "*" || s == "/" || s == "and");
+}
+
+
+
+#endif

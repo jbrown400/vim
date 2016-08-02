@@ -1,0 +1,4 @@
+<h1>{{ project }}</h1>
+<p>{{ project.description }}</p>
+<a href="{% url 'showcase:home' %}">Home</a>
+<a href="{% url 'showcase:projects' %}">Projects</a>

@@ -1,0 +1,279 @@
+# This file houses the Minimax function and the "sub-functions" min-value and max-value
+from games.chess.generation import generateMoves, copy_pieces, getKing, checkCheck
+import time
+
+
+class MiniMax:
+
+    my_color = ""
+
+    def __init__(self):
+        self.my_color = ""
+
+    def mini_max(self, AI_self):
+        max_plies = 10
+        self.my_color = AI_self.player.color
+        value = -1
+
+        for x in range(1, max_plies + 1):
+            temp = MiniMax.max_val()
+            if temp >= value:
+                value = temp
+
+
+    def max_val(level, my_pieces, op_pieces):
+        if level == 0:
+            value = state_eval()
+            return value
+        moves = generateMoves(AI
+
+    def min_val(level, my_pieces, op_pieces):
+        pass
+
+    def state_eval():
+        pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+class MiniMax:
+
+    history_table = []
+    my_color = ""
+
+    def __init__(self):
+        self.history_table = []
+        self.my_color = ""
+
+    def mini_max(self, my_pieces, op_pieces, my_c):
+        alpha = -1000
+        beta = 1000
+        init_quiescence = 2
+        max_plies = 10
+        value = -500
+        self.my_color = my_c
+        return_move = None
+        # start timer
+        start = int(round(time.time() * 1000))
+
+        for x in range(1, max_plies + 1):
+            info = MiniMax.max_val(self, my_pieces, op_pieces, x, start, alpha, beta, init_quiescence)
+            high = info[0]
+            # break if time limit has been met
+            if(info[2] == -1):
+                print("Reached", x, "plies")
+                if(high > value):
+                    value = high
+                    return_move = info[1]
+                return return_move
+            if(high > value):
+                value = high
+                return_move = info[1]
+
+        return return_move
+
+    def max_val(self, my_pieces, op_pieces, level, start, alpha, beta, quiescence):
+        current = int(round(time.time() * 1000))
+        time_elapsed = current - start
+        if(time_elapsed >= 15000):
+            return [0, [], -1]
+
+        moves = generateMoves(self, my_pieces, op_pieces, MiniMax.history_table)
+        if(level == 0):
+            # check for Quiescent state
+            if quiescence != 0 and MiniMax.checkQuiescence(self, moves):
+                # change level so program will continue to run
+                quiescence -= 1
+            else:
+                eval = MiniMax.evaluate_state(self, my_pieces, op_pieces)
+                return eval, None, 0
+
+        best = -1000
+        return_move = None
+        if(len(moves) == 0):
+            eval = MiniMax.evaluate_state(self, my_pieces, op_pieces)
+            return eval, None, 0
+        # Sort moves based on history table value
+        moves.sort(key=lambda h: h.history_table_count)
+        for m in moves:
+            tmp_list = copy_pieces(my_pieces)
+            tmp_op_list = copy_pieces(op_pieces)
+            for x in tmp_list:
+                if(m.piece.id == x.id):
+                    x.setFile(m.sim_file)
+                    x.setRank(m.sim_rank)
+                    # if a pawn is being promoted, change the piece type
+                    if(m.promotion):
+                        x.setType(m.promotion)
+                    for o in tmp_op_list:
+                        if(o.file == m.sim_file and o.rank == m.sim_rank and o.type != "King"):
+                            tmp_op_list.remove(o)
+                            break
+                    break
+            info = MiniMax.min_val(self, tmp_op_list, tmp_list, level - 1, start, alpha, beta, quiescence)
+            high = info[0]
+            if(return_move is None):
+                if(high >= best):
+                    best = high
+                    return_move = m
+            else:
+                if(high > best):
+                    best = high
+                    return_move = m
+            if(best >= beta):
+                MiniMax.updateHistoryTable(self, return_move)
+                return best, return_move, 0
+            alpha = max(best, alpha)
+
+        MiniMax.updateHistoryTable(self, return_move)
+        return best, return_move, 0
+
+    def min_val(self, my_pieces, op_pieces, level, start, alpha, beta, quiescence):
+        current = int(round(time.time() * 1000))
+        time_elapsed = current - start
+        if(time_elapsed >= 15000):
+            return [0, [], -1]
+
+        moves = generateMoves(self, my_pieces, op_pieces, MiniMax.history_table)
+        if(level == 0):
+            # check for Quiescent state
+            if quiescence != 0 and MiniMax.checkQuiescence(self, moves):
+                # change level so program will continue to run
+                quiescence -= 1
+            else:
+                eval = MiniMax.evaluate_state(self, op_pieces, my_pieces)
+                return eval, None, 0
+
+        best = 1000
+        return_move = None
+        if(len(moves) == 0):
+            eval = MiniMax.evaluate_state(self, my_pieces, op_pieces)
+            return eval, None, 0
+        # Sort moves based on history table value
+        moves.sort(key=lambda h: h.history_table_count)
+        for m in moves:
+            tmp_list = copy_pieces(my_pieces)
+            tmp_op_list = copy_pieces(op_pieces)
+            for x in tmp_list:
+                if(m.piece.id == x.id):
+                    x.setFile(m.sim_file)
+                    x.setRank(m.sim_rank)
+                    # if a pawn is being promoted, change the piece type
+                    if(m.promotion):
+                        x.setType(m.promotion)
+                    for o in tmp_op_list:
+                        if(o.file == m.sim_file and o.rank == m.sim_rank and o.type != "King"):
+                            tmp_op_list.remove(o)
+                            break
+                    break
+            info = MiniMax.max_val(self, tmp_op_list, tmp_list, level - 1, start, alpha, beta, quiescence)
+            low = info[0]
+            if(low < best):
+                best = low
+                return_move = m
+            if(best <= alpha):
+                MiniMax.updateHistoryTable(self, return_move)
+                return best, return_move, 0
+            # set beta
+            beta = min(beta, best)
+
+        MiniMax.updateHistoryTable(self, return_move)
+        return best, return_move, 0
+
+    def evaluate_state(self, my_pieces, op_pieces, moves=[0, 0]):
+        # only evaluate from my point of view
+        if(len(moves) == 0):
+            return -10
+        sum = 0
+        for x in my_pieces + op_pieces:
+            if(x.owner.color == MiniMax.my_color):
+                sum += x.value
+            else:
+                sum -= x.value
+        op_king = getKing(op_pieces)
+        # checkCheck returning false means that your opponent is in check
+        if(checkCheck(op_king, op_pieces, my_pieces) is False):
+            sum += 3
+        return sum
+
+    # Pre: None
+    # Post: increments history table count for a move or adds the move
+    def updateHistoryTable(self, move):
+        for h in MiniMax.history_table:
+            # if the move is already there, increment the count
+            if h.piece.type == move.piece.type and \
+                    h.sim_rank == move.sim_rank and h.sim_file == move.sim_file:
+                h.history_table_count += 1
+            # else add the move
+            else:
+                move.history_table_count = 1
+                MiniMax.history_table.append(move)
+
+    def checkQuiescence(self, moves):
+        count = 0
+        for m in moves:
+            # if a piece can be taken
+            if m.value != 0:
+                count += 1
+            # if 5 or move pieces can be taken, it's not a quiet state
+            if count >= 10:
+                return True
+        return False
+
+    def print_board(pieces):
+        for f in range(9, -2, -1):  # iterate through the file in reverse order
+            output = ""
+            if f == 9 or f == 0:  # then the top or bottom of the board
+                output = "   +------------------------+"
+            elif f == -1:  # then show the ranks
+                output = "     a  b  c  d  e  f  g  h"
+            else:  # board
+                output = " " + str(f) + " |"
+                # fill in all the ranks with pieces at the current rank
+                for rankOffset in range(0, 8):
+                    r = chr(ord("a") + rankOffset)  # start at a, with with rank offset increasing the char
+                    currentPiece = None
+                    for piece in pieces:
+                        if piece.rank == f and piece.file == r:  # then we found the piece at (rank, file)
+                            currentPiece = piece
+                            break
+
+                    code = "."  # default "no piece"
+                    if currentPiece:
+                        code = currentPiece.type[0]  # the code will be the first character of their type, e.g. 'Q' for "Queen"
+
+                        if currentPiece.type == "Knight":  # 'K' is for "King", we use 'N' for "Knights"
+                            code = "N"
+
+                        if currentPiece.owner.id == "1":  # the second player (black) is lower case. Otherwise it's upppercase already
+                            code = code.lower()
+
+                    output += " " + code + " "
+
+                output += "|"
+
+            print(output)
+
+'''

@@ -1,0 +1,83 @@
+{% extends 'browse/base.html' %}
+{% load staticfiles %}
+{% load sass_tags %}
+{% load cards %}
+
+{% block title %}Home{% endblock %}
+{% block header %}
+  <link href="{% sass_src "browse/scss/reviews.scss" %}" rel="stylesheet"
+        type="text/css" />
+{% endblock %}
+
+
+{% block content %}
+{% csrf_token %}
+
+  {% if messages %}
+
+    <!-- FIXME: Open login dialog and run that -->
+    {% for message in messages %}
+      <div flex-container="row">
+        <div flex-item class="sweaters-error">
+          <center>
+            {{ message }}
+          </center>
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+    <div id="cycler" class="cyc">
+        <img class="active" src="{% static 'browse/img/Logo_Wide.jpg' %}"> 
+        <img src="{% static 'browse/img/Library_Panorama.jpg' %}">
+        <img src="{% static 'browse/img/St_Pat.jpg' %}">
+        <img src="{% static 'browse/img/Havener.jpg' %}">
+    </div>
+    <div flex-container="row" flex-gutter="24">
+      <div flex-item="8">
+      {% if review_votes|length > 0 %}
+        <div class=latest-block>
+          <h2>
+            Latest {{review_votes|length}} Review(s)
+          </h2>
+        </div>
+      {% endif %}
+        {% if review_votes|length > 0 %}
+          {% for review, vote in review_votes %}
+            {% review_card review vote %}
+          {% endfor %}
+        {% else %}
+          <h2>There are no reviews</h2>
+        {% endif %}
+      </div>
+      <div flex-item="4">
+        <div flex-container="column" flex-align="space-between">
+          {% if not user.is_authenticated %}
+          <div flex-container="row" class="subtitle-block">
+              <div flex-item="6">
+              Not a member yet?
+              </div>
+              <div flex-item="6">
+                <lx-button lx-color="orange">
+                  <span class="fs-headline">Register now!</span>
+                </lx-button>
+              </div>
+          </div>
+          {% endif %}
+          <div flex-item="4" class="subtitle-block">
+             About Us!
+          </div> 
+          <div flex-container="4">
+              <p style="font-size:20px;">
+                  We are Cardigans, but with Peer Reviews! We are a Senior Design team
+                  tasked with creating a professor rating website where students
+                  can go acquire valuable, high quality, information regarding professors
+                  and their classes.
+              </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <br /> <br />
+
+
+{% endblock %}
